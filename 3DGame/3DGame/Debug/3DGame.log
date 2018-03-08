@@ -1,5 +1,5 @@
 ﻿  main.cpp
-c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(93): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(94): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(104): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
+c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(105): warning C4305: 'argument': truncation from 'double' to 'GLfloat'
   3DGame.vcxproj -> C:\Users\B00307864\Desktop\3DGameRepo\3DGame\Debug\3DGame.exe
   3DGame.vcxproj -> C:\Users\B00307864\Desktop\3DGameRepo\3DGame\Debug\3DGame.pdb (Partial PDB)

@@ -9,7 +9,13 @@
 #pragma comment(linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "rt3d.h"
+
+#define DEG_TO_RADIAN 0.017453293
 
 using namespace std;
 
@@ -36,6 +42,8 @@ GLfloat vertices2[] = { 0.0f,0.0f,0.0f,
 
 
 GLuint meshObjects[2];
+GLuint mvpShaderProgram;
+glm::mat4 MVP;
 
 // Set up rendering context
 SDL_Window * setupRC(SDL_GLContext &context) {
@@ -68,7 +76,8 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
-	rt3d::initShaders("minimal.vert", "minimal.frag");
+	mvpShaderProgram = rt3d::initShaders("mvp.vert", "minimal.frag");
+	MVP = glm::mat4(1.0);
 
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createColourMesh(6, vertices, colours);
@@ -81,7 +90,9 @@ void draw(SDL_Window * window) {
 
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+	MVP = glm::rotate(MVP, float(0.1f*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
 
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
 	rt3d::drawMesh(meshObjects[0], 6, GL_TRIANGLES);
 	//rt3d::drawMesh(meshObjects[1], 3, GL_TRIANGLES);
 
