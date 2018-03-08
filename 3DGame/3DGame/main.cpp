@@ -1,4 +1,3 @@
-//test
 #if _DEBUG // Opens console if on Debug mode
 #pragma comment (linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
