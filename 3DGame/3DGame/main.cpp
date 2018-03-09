@@ -45,6 +45,8 @@ GLuint meshObjects[2];
 GLuint mvpShaderProgram;
 glm::mat4 MVP;
 
+GLfloat dx = 0.0f, dy = 0.0f, r = 0.0f, scalar = 1.0f;
+
 // Set up rendering context
 SDL_Window * setupRC(SDL_GLContext &context) {
 	SDL_Window * window;
@@ -81,7 +83,22 @@ void init(void) {
 
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createColourMesh(6, vertices, colours);
-	//meshObjects[1] = rt3d::createColourMesh(3, vertices2, colours);
+	meshObjects[1] = rt3d::createColourMesh(3, vertices, colours);
+
+}
+
+void update(void) {
+	const Uint8 *keys = SDL_GetKeyboardState(NULL);
+	if (keys[SDL_SCANCODE_W]) dy += 0.1;
+	if (keys[SDL_SCANCODE_S]) dy -= 0.1;
+	if (keys[SDL_SCANCODE_D]) dx += 0.1;
+	if (keys[SDL_SCANCODE_A]) dx -= 0.1;
+
+	if (keys[SDL_SCANCODE_LEFT]) r += 1;
+	if (keys[SDL_SCANCODE_RIGHT]) r -= 1;
+	if (keys[SDL_SCANCODE_UP]) scalar += 0.1;
+	if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1;
+
 
 }
 
@@ -90,11 +107,16 @@ void draw(SDL_Window * window) {
 
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	MVP = glm::rotate(MVP, float(0.1f*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
 
+	// Using identity instead of MVP prevents an endless loop of transformations.
+	MVP = glm::mat4(1.0);
+
+	MVP = glm::scale(MVP, glm::vec3(scalar, scalar, 0.0f));
+	MVP = glm::translate(MVP, glm::vec3(dx, dy, 0.0f));
+	MVP = glm::rotate(MVP, float(r*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
+
 	rt3d::drawMesh(meshObjects[0], 6, GL_TRIANGLES);
-	//rt3d::drawMesh(meshObjects[1], 3, GL_TRIANGLES);
 
 	// These are deprecated functions. If a core profile has been correctly 
 	// created, these commands should compile, but wont render anything
@@ -133,6 +155,7 @@ int main(int argc, char *argv[]) {
 			if (sdlEvent.type == SDL_QUIT)
 				running = false;
 		}
+		update();
 		draw(hWindow); // call the draw function
 	}
 
