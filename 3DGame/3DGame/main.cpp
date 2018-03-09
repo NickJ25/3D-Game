@@ -22,27 +22,28 @@ using namespace std;
 // Globals
 // Real programs don't use globals :-D
 // Data would normally be read from files
-GLfloat vertices[] = { -0.5f,-0.5f,0.0f,
-						0.5f,0.5f,0.0f,
-						-0.5f,0.5f,0.0f,
-						-0.5f,-0.5f,0.0f,
-						0.5f,0.5f,0.0f,
-						0.5f,-0.5f,0.0f };
+GLuint vertexCount = 4;
+
+GLfloat vertices[] = { -1.0f, 0.0f, 0.0f,
+						-1.0f, 1.0f, 0.0f,
+						0.0f,  1.0f, 0.0f,
+						0.0f,  0.0f, 0.0f, };
 
 GLfloat colours[] = { 1.0f, 0.0f, 0.0f,
 						0.0f, 1.0f, 0.0f,
 						0.0f, 0.0f, 1.0f,
-						1.0f, 0.0f, 0.0f,
-						0.0f, 1.0f, 0.0f,
-						0.0f, 0.0f, 1.0f };
+						0.0f, 0.0f, 0.0f };
 
-GLfloat vertices2[] = { 0.0f,0.0f,0.0f,
-						0.0f,-1.0f,0.0f,
-						1.0f,0.0f,0.0f };
+GLuint indexCount = 6;
+
+GLuint indices[] = { 0, 1, 2, 0, 2, 3 };
+
+
 
 
 GLuint meshObjects[2];
 GLuint mvpShaderProgram;
+
 glm::mat4 MVP;
 
 GLfloat dx = 0.0f, dy = 0.0f, r = 0.0f, scalar = 1.0f;
@@ -82,8 +83,8 @@ void init(void) {
 	MVP = glm::mat4(1.0);
 
 	// Going to create our mesh objects here
-	meshObjects[0] = rt3d::createColourMesh(6, vertices, colours);
-	meshObjects[1] = rt3d::createColourMesh(3, vertices, colours);
+	meshObjects[0] = rt3d::createMesh(vertexCount, vertices,
+		colours, nullptr, nullptr, indexCount, indices);
 
 }
 
@@ -109,23 +110,14 @@ void draw(SDL_Window * window) {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	// Using identity instead of MVP prevents an endless loop of transformations.
-	MVP = glm::mat4(1.0);
+	MVP = glm::mat4(1.0f);
 
 	MVP = glm::scale(MVP, glm::vec3(scalar, scalar, 0.0f));
 	MVP = glm::translate(MVP, glm::vec3(dx, dy, 0.0f));
 	MVP = glm::rotate(MVP, float(r*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
 
-	rt3d::drawMesh(meshObjects[0], 6, GL_TRIANGLES);
-
-	// These are deprecated functions. If a core profile has been correctly 
-	// created, these commands should compile, but wont render anything
-	glColor3f(0.5, 1.0, 1.0);
-	glBegin(GL_TRIANGLES);
-	glVertex3f(0.5, 0.5, 0.0);
-	glVertex3f(0.7, 0.5, 0.0);
-	glVertex3f(0.5, 0.7, 0.0);
-	glEnd();
+	rt3d::drawIndexedMesh(meshObjects[0], indexCount, GL_TRIANGLES);
 
 	SDL_GL_SwapWindow(window); // swap buffers
 }
