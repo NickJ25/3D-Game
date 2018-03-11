@@ -38,13 +38,45 @@ GLuint indexCount = 6;
 
 GLuint indices[] = { 0, 1, 2, 0, 2, 3 };
 
+GLfloat cubeVertCount = 8;
+GLfloat cubeVerts[] = { -0.5, -0.5f, -0.5f,
+						-0.5, 0.5f, -0.5f,
+						0.5, 0.5f, -0.5f,
+						0.5, -0.5f, -0.5f,
+						-0.5, -0.5f, 0.5f,
+						-0.5, 0.5f, 0.5f,
+						0.5, 0.5f, 0.5f,
+						0.5, -0.5f, 0.5f };
+
+GLfloat cubeColours[] = { 0.0f, 0.0f, 0.0f,
+						0.0f, 1.0f, 0.0f,
+						1.0f, 1.0f, 0.0f,
+						1.0f, 0.0f, 0.0f,
+						0.0f, 0.0f, 1.0f,
+						0.0f, 1.0f, 1.0f,
+						1.0f, 1.0f, 1.0f,
+						1.0f, 0.0f, 1.0f };
+
+GLuint cubeIndexCount = 36;
+GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back  
+						1,0,5, 0,4,5, // left					
+						6,3,2, 3,6,7, // right
+						1,5,6, 1,6,2, // top
+						0,3,4, 3,7,4, // bottom
+						6,5,4, 7,6,4 }; // front
+
+// Screen Size
+GLfloat screenWidth = 1920, screenHeight = 1080;
+
+// glm perspective settings
+GLfloat fov = 70, aspect = ((float)screenWidth / (float)screenHeight), near = 0.1, far = 100.0f;
+
 
 
 
 GLuint meshObjects[2];
 GLuint mvpShaderProgram;
 
-glm::mat4 MVP;
 
 GLfloat dx = 0.0f, dy = 0.0f, r = 0.0f, scalar = 1.0f;
 
@@ -68,7 +100,7 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 
 													   // Create 800x600 window
 	window = SDL_CreateWindow("SDL/GLM/OpenGL Demo", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+		screenWidth, screenHeight, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
 	if (!window) // Check window was created OK
 		rt3d::exitFatalError("Unable to create window");
 
@@ -80,23 +112,25 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
 	mvpShaderProgram = rt3d::initShaders("mvp.vert", "minimal.frag");
-	MVP = glm::mat4(1.0);
+
+	glEnable(GL_DEPTH_TEST);
 
 	// Going to create our mesh objects here
-	meshObjects[0] = rt3d::createMesh(vertexCount, vertices,
-		colours, nullptr, nullptr, indexCount, indices);
+	//meshObjects[0] = rt3d::createMesh(vertexCount, vertices,
+		//colours, nullptr, nullptr, indexCount, indices);
+	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, cubeColours, nullptr, nullptr, cubeIndexCount, cubeIndices);
 
 }
 
 void update(void) {
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
-	if (keys[SDL_SCANCODE_W]) dy += 0.1;
-	if (keys[SDL_SCANCODE_S]) dy -= 0.1;
-	if (keys[SDL_SCANCODE_D]) dx += 0.1;
-	if (keys[SDL_SCANCODE_A]) dx -= 0.1;
+	if (keys[SDL_SCANCODE_W]) dy += 0.01;
+	if (keys[SDL_SCANCODE_S]) dy -= 0.01;
+	if (keys[SDL_SCANCODE_D]) dx += 0.01;
+	if (keys[SDL_SCANCODE_A]) dx -= 0.01;
 
-	if (keys[SDL_SCANCODE_LEFT]) r += 1;
-	if (keys[SDL_SCANCODE_RIGHT]) r -= 1;
+	if (keys[SDL_SCANCODE_LEFT]) r += 4;
+	if (keys[SDL_SCANCODE_RIGHT]) r -= 4;
 	if (keys[SDL_SCANCODE_UP]) scalar += 0.1;
 	if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1;
 
@@ -105,19 +139,30 @@ void update(void) {
 
 void draw(SDL_Window * window) {
 	// clear the screen
-
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glm::mat4 projection(1.0);
+	glm::mat4 modelview(1.0);
+
+	projection = glm::perspective(float(60.0f*DEG_TO_RADIAN), 800.0f / 600.0f, 1.0f, 50.0f);
+	modelview = glm::translate(modelview, glm::vec3(dx, dy, -4));
+	modelview = glm::scale(modelview, glm::vec3(scalar, scalar, scalar));
+	modelview = glm::rotate(modelview, float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
 
 	// Using identity instead of MVP prevents an endless loop of transformations.
-	MVP = glm::mat4(1.0f);
+	/*glm::mat4 MVP = glm::mat4(1.0f);
 
-	MVP = glm::scale(MVP, glm::vec3(scalar, scalar, 0.0f));
+	MVP = glm::scale(MVP, glm::vec3(scalar, scalar, scalar));
 	MVP = glm::translate(MVP, glm::vec3(dx, dy, 0.0f));
-	MVP = glm::rotate(MVP, float(r*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
+	MVP = glm::rotate(MVP, float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));*/
+
+	projection = glm::perspective(fov, aspect, near, far);
+
+	glm::mat4 MVP = projection * modelview;
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
 
-	rt3d::drawIndexedMesh(meshObjects[0], indexCount, GL_TRIANGLES);
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 
 	SDL_GL_SwapWindow(window); // swap buffers
 }

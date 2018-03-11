@@ -1,8 +1,11 @@
 ﻿  main.cpp
-d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(93): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(94): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(95): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(96): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(100): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(101): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(72): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(103): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(121): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(127): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(128): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(129): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(130): warning C4305: '-=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(134): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\documents\local gitrepo\3dgame\3dgame\main.cpp(135): warning C4305: '-=': truncation from 'double' to 'GLfloat'
   3DGame.vcxproj -> D:\Users\Cookie\Documents\Local GitRepo\3DGame\Debug\3DGame.exe
