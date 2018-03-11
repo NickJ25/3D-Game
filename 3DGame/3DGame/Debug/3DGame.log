@@ -1,14 +1,10 @@
 ﻿  main.cpp
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(56): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(87): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(103): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(85): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(101): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(110): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(111): warning C4305: '-=': truncation from 'double' to 'GLfloat'
 d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(112): warning C4305: '+=': truncation from 'double' to 'GLfloat'
 d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(113): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(114): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(115): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(119): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(120): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-  rt3d.cpp
-  Generating Code...
-  LINK : D:\Users\Cookie\Desktop\3DTestRepo\3DGame\Debug\3DGame.exe not found or not built by the last incremental link; performing full link
+d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(117): warning C4305: '+=': truncation from 'double' to 'GLfloat'
+d:\users\cookie\desktop\3dtestrepo\3dgame\3dgame\main.cpp(118): warning C4305: '-=': truncation from 'double' to 'GLfloat'
   3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DTestRepo\3DGame\Debug\3DGame.exe

@@ -142,11 +142,15 @@
     <ClCompile Include="rt3d.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="gouraud.vert" />
     <None Include="minimal.frag" />
     <None Include="minimal.vert" />
     <None Include="mvp.vert" />
+    <None Include="phong-tex.frag" />
+    <None Include="phong-tex.vert" />
     <None Include="phong.frag" />
     <None Include="phong.vert" />
+    <None Include="simple.frag" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rt3d.h" />

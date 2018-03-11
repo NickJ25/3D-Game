@@ -9,10 +9,8 @@
 #pragma comment(linker, "/subsystem:\"console\" /entry:\"WinMainCRTStartup\"")
 #endif
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
+#include <stack>
 #include "rt3d.h"
 
 #define DEG_TO_RADIAN 0.017453293
@@ -50,13 +48,13 @@ GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back
 						6,5,4, 7,6,4 }; // front
 
 // Screen Size
-GLfloat screenWidth = 1920, screenHeight = 1080;
+GLfloat screenWidth = 800, screenHeight = 600;
 
 // glm perspective settings
-GLfloat fov = 70, aspect = ((float)screenWidth / (float)screenHeight), near = 0.1, far = 100.0f;
+GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)screenHeight), near = 1.0f, far = 50.0f;
 
-
-
+// Stack for storing modelview matrix when dealing with multiple matrixes
+stack<glm::mat4> mvStack;
 
 GLuint meshObjects[2];
 GLuint mvpShaderProgram;
@@ -95,9 +93,9 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
-	mvpShaderProgram = rt3d::initShaders("mvp.vert", "minimal.frag");
-
 	glEnable(GL_DEPTH_TEST);
+	mvpShaderProgram = rt3d::initShaders("mvp.vert", "minimal.frag");//("mvp.vert", "minimal.frag");
+
 
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, 
@@ -127,22 +125,31 @@ void draw(SDL_Window * window) {
 	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// resets projection matrix at the start before being put in
+	glm::mat4 MVP(1.0);
 	glm::mat4 projection(1.0);
-	glm::mat4 modelview(1.0);
-
-	projection = glm::perspective(float(60.0f*DEG_TO_RADIAN), 800.0f / 600.0f, 1.0f, 50.0f);
-	modelview = glm::translate(modelview, glm::vec3(dx, dy, -4));
-	modelview = glm::scale(modelview, glm::vec3(scalar, scalar, scalar));
-	modelview = glm::rotate(modelview, float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
-
-	// Using identity instead of MVP prevents an endless loop of transformations.
-
 	projection = glm::perspective(fov, aspect, near, far);
 
-	glm::mat4 MVP = projection * modelview;
+	glm::mat4 modelview(1.0);
+	mvStack.push(modelview);
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -4.0f));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar, scalar, scalar));
+	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
+	MVP = projection * mvStack.top();
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
-
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	
+
+	mvStack.push(mvStack.top());
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx-2, dy-2, -4));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar / 2, scalar / 2, scalar / 2));
+	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
+	MVP = projection * mvStack.top();
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	mvStack.pop();
+	mvStack.pop();
+
 
 	SDL_GL_SwapWindow(window); // swap buffers
 }
