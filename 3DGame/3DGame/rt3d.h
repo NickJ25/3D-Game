@@ -49,7 +49,7 @@ namespace rt3d {
 	void setLightPos(const GLuint program, const GLfloat *lightPos);
 	void setMaterial(const GLuint program, const materialStruct material);
 
-	void drawMesh(const GLuint mesh, const GLuint numVerts, const GLuint primitive);
+	void drawMesh(const GLuint mesh, const GLuint numVerts, const GLuint primitive); 
 	void drawIndexedMesh(const GLuint mesh, const GLuint indexCount, const GLuint primitive);
 
 	void updateMesh(const GLuint mesh, const unsigned int bufferType, const GLfloat *data, const GLuint size);

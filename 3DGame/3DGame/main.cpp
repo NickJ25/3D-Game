@@ -22,22 +22,6 @@ using namespace std;
 // Globals
 // Real programs don't use globals :-D
 // Data would normally be read from files
-GLuint vertexCount = 4;
-
-GLfloat vertices[] = { -1.0f, 0.0f, 0.0f,
-						-1.0f, 1.0f, 0.0f,
-						0.0f,  1.0f, 0.0f,
-						0.0f,  0.0f, 0.0f, };
-
-GLfloat colours[] = { 1.0f, 0.0f, 0.0f,
-						0.0f, 1.0f, 0.0f,
-						0.0f, 0.0f, 1.0f,
-						0.0f, 0.0f, 0.0f };
-
-GLuint indexCount = 6;
-
-GLuint indices[] = { 0, 1, 2, 0, 2, 3 };
-
 GLfloat cubeVertCount = 8;
 GLfloat cubeVerts[] = { -0.5, -0.5f, -0.5f,
 						-0.5, 0.5f, -0.5f,
@@ -116,13 +100,14 @@ void init(void) {
 	glEnable(GL_DEPTH_TEST);
 
 	// Going to create our mesh objects here
-	//meshObjects[0] = rt3d::createMesh(vertexCount, vertices,
-		//colours, nullptr, nullptr, indexCount, indices);
-	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, cubeColours, nullptr, nullptr, cubeIndexCount, cubeIndices);
+	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, 
+		cubeColours, nullptr, nullptr, cubeIndexCount, cubeIndices);
 
 }
 
 void update(void) {
+
+	// Keyboard inputs
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_W]) dy += 0.01;
 	if (keys[SDL_SCANCODE_S]) dy -= 0.01;
@@ -151,11 +136,6 @@ void draw(SDL_Window * window) {
 	modelview = glm::rotate(modelview, float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
 
 	// Using identity instead of MVP prevents an endless loop of transformations.
-	/*glm::mat4 MVP = glm::mat4(1.0f);
-
-	MVP = glm::scale(MVP, glm::vec3(scalar, scalar, scalar));
-	MVP = glm::translate(MVP, glm::vec3(dx, dy, 0.0f));
-	MVP = glm::rotate(MVP, float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));*/
 
 	projection = glm::perspective(fov, aspect, near, far);
 

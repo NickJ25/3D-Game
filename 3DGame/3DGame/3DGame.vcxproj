@@ -145,6 +145,8 @@
     <None Include="minimal.frag" />
     <None Include="minimal.vert" />
     <None Include="mvp.vert" />
+    <None Include="phong.frag" />
+    <None Include="phong.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="rt3d.h" />
