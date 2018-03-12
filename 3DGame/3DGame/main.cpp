@@ -20,6 +20,7 @@ using namespace std;
 // Globals
 // Real programs don't use globals :-D
 // Data would normally be read from files
+
 GLfloat cubeVertCount = 8;
 GLfloat cubeVerts[] = { -0.5, -0.5f, -0.5f,
 						-0.5, 0.5f, -0.5f,
@@ -46,6 +47,13 @@ GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back
 						1,5,6, 1,6,2, // top
 						0,3,4, 3,7,4, // bottom
 						6,5,4, 7,6,4 }; // front
+
+rt3d::lightStruct light0 = {
+	{ 0.1f, 0.3f, 0.4f, 1.0f }, // ambient
+	{ 0.7f, 0.7f, 0.7f, 1.0f }, // diffuse
+	{ 0.8f, 0.8f, 0.8f, 1.0f }, // specular
+	{ 0.0f, 0.0f, 1.0f, 1.0f }  // position
+};
 
 // Screen Size
 GLfloat screenWidth = 800, screenHeight = 600;
@@ -94,12 +102,12 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
 	glEnable(GL_DEPTH_TEST);
-	mvpShaderProgram = rt3d::initShaders("mvp.vert", "minimal.frag");//("mvp.vert", "minimal.frag");
-
+	mvpShaderProgram = rt3d::initShaders("phong.vert", "phong.frag");//("mvp.vert", "minimal.frag");
+	rt3d::setLight(mvpShaderProgram, light0);
 
 	// Going to create our mesh objects here
-	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, 
-		cubeColours, nullptr, nullptr, cubeIndexCount, cubeIndices);
+	//meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, cubeColours, nullptr, nullptr, cubeIndexCount, cubeIndices);
+	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, nullptr, cubeIndexCount, cubeIndices);
 
 }
 
@@ -126,17 +134,18 @@ void draw(SDL_Window * window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// resets projection matrix at the start before being put in
-	glm::mat4 MVP(1.0);
+	//glm::mat4 MVP(1.0);
 	glm::mat4 projection(1.0);
 	projection = glm::perspective(fov, aspect, near, far);
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "projection", glm::value_ptr(projection));
 
 	glm::mat4 modelview(1.0);
 	mvStack.push(modelview);
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -4.0f));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar, scalar, scalar));
 	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
-	MVP = projection * mvStack.top();
-	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
+	//MVP = projection * mvStack.top();
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	
 
@@ -144,8 +153,8 @@ void draw(SDL_Window * window) {
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx-2, dy-2, -4));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar / 2, scalar / 2, scalar / 2));
 	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
-	MVP = projection * mvStack.top();
-	rt3d::setUniformMatrix4fv(mvpShaderProgram, "MVP", glm::value_ptr(MVP));
+	//MVP = projection * mvStack.top();
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
 	mvStack.pop();
@@ -157,16 +166,16 @@ void draw(SDL_Window * window) {
 
 // Program entry point - SDL manages the actual WinMain entry point for us
 int main(int argc, char *argv[]) {
-	SDL_Window * hWindow; // window handle
-	SDL_GLContext glContext; // OpenGL context handle
-	hWindow = setupRC(glContext); // Create window and render context 
+    SDL_Window * hWindow; // window handle
+    SDL_GLContext glContext; // OpenGL context handle
+    hWindow = setupRC(glContext); // Create window and render context 
 
-								  // Required on Windows *only* init GLEW to access OpenGL beyond 1.1
+	// Required on Windows *only* init GLEW to access OpenGL beyond 1.1
 	glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (GLEW_OK != err) { // glewInit failed, something is seriously wrong
 		std::cout << "glewInit failed, aborting." << endl;
-		exit(1);
+		exit (1);
 	}
 	cout << glGetString(GL_VERSION) << endl;
 
@@ -174,7 +183,7 @@ int main(int argc, char *argv[]) {
 
 	bool running = true; // set running to true
 	SDL_Event sdlEvent;  // variable to detect SDL events
-	while (running) {	// the event loop
+	while (running)	{	// the event loop
 		while (SDL_PollEvent(&sdlEvent)) {
 			if (sdlEvent.type == SDL_QUIT)
 				running = false;
@@ -183,10 +192,10 @@ int main(int argc, char *argv[]) {
 		draw(hWindow); // call the draw function
 	}
 
-	SDL_GL_DeleteContext(glContext);
-	SDL_DestroyWindow(hWindow);
-	SDL_Quit();
-	return 0;
+    SDL_GL_DeleteContext(glContext);
+    SDL_DestroyWindow(hWindow);
+    SDL_Quit();
+    return 0;
 }
 
 
