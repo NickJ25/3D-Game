@@ -49,10 +49,17 @@ GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back
 						6,5,4, 7,6,4 }; // front
 
 rt3d::lightStruct light0 = {
-	{ 0.1f, 0.3f, 0.4f, 1.0f }, // ambient
+	{ 0.3f, 0.3f, 0.3f, 1.0f }, // ambient
 	{ 0.7f, 0.7f, 0.7f, 1.0f }, // diffuse
 	{ 0.8f, 0.8f, 0.8f, 1.0f }, // specular
 	{ 0.0f, 0.0f, 1.0f, 1.0f }  // position
+};
+
+rt3d::materialStruct material0 = {
+	{0.4f, 0.2f, 0.2f, 1.0f}, // ambient
+	{0.8f, 0.5f, 0.5f, 1.0f}, // diffuse
+	{1.0f, 0.8f, 0.8f, 1.0f}, // specular
+	2.0f // shininess
 };
 
 // Screen Size
@@ -66,9 +73,14 @@ stack<glm::mat4> mvStack;
 
 GLuint meshObjects[2];
 GLuint mvpShaderProgram;
+GLuint mvpShaderProgam2;
+bool lightMode = false;
 
-
+// Object Settings
 GLfloat dx = 0.0f, dy = 0.0f, r = 0.0f, scalar = 1.0f;
+
+// Light Settings
+GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
 // Set up rendering context
 SDL_Window * setupRC(SDL_GLContext &context) {
@@ -104,9 +116,9 @@ void init(void) {
 	glEnable(GL_DEPTH_TEST);
 	mvpShaderProgram = rt3d::initShaders("phong.vert", "phong.frag");//("mvp.vert", "minimal.frag");
 	rt3d::setLight(mvpShaderProgram, light0);
+	rt3d::setMaterial(mvpShaderProgram, material0);
 
 	// Going to create our mesh objects here
-	//meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, cubeColours, nullptr, nullptr, cubeIndexCount, cubeIndices);
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, nullptr, cubeIndexCount, cubeIndices);
 
 }
@@ -115,16 +127,33 @@ void update(void) {
 
 	// Keyboard inputs
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
-	if (keys[SDL_SCANCODE_W]) dy += 0.01;
-	if (keys[SDL_SCANCODE_S]) dy -= 0.01;
-	if (keys[SDL_SCANCODE_D]) dx += 0.01;
-	if (keys[SDL_SCANCODE_A]) dx -= 0.01;
+	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
+	if (!lightMode) {
+		if (keys[SDL_SCANCODE_W]) dy += 0.01;
+		if (keys[SDL_SCANCODE_S]) dy -= 0.01;
+		if (keys[SDL_SCANCODE_D]) dx += 0.01;
+		if (keys[SDL_SCANCODE_A]) dx -= 0.01;
 
-	if (keys[SDL_SCANCODE_LEFT]) r += 4;
-	if (keys[SDL_SCANCODE_RIGHT]) r -= 4;
-	if (keys[SDL_SCANCODE_UP]) scalar += 0.1;
-	if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1;
+		if (keys[SDL_SCANCODE_LEFT]) r += 4;
+		if (keys[SDL_SCANCODE_RIGHT]) r -= 4;
+		if (keys[SDL_SCANCODE_UP]) scalar += 0.1;
+		if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1;
+	}
+	else {
+		if (keys[SDL_SCANCODE_W]) dyl += 0.1;
+		if (keys[SDL_SCANCODE_S]) dyl -= 0.1;
+		if (keys[SDL_SCANCODE_D]) dxl += 0.1;
+		if (keys[SDL_SCANCODE_A]) dxl -= 0.1;
 
+		if (keys[SDL_SCANCODE_LEFT]) lr += 4;
+		if (keys[SDL_SCANCODE_RIGHT]) lr -= 4;
+		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1;
+		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1;
+	}
+	cout << light0.position[0] << " " <<
+			light0.position[1] << " " << 
+			light0.position[2] << " " <<
+			light0.position[3] << " " << endl;
 
 }
 
@@ -134,17 +163,25 @@ void draw(SDL_Window * window) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// resets projection matrix at the start before being put in
-	//glm::mat4 MVP(1.0);
 	glm::mat4 projection(1.0);
+
+	// Light setup
+	glm::mat4 lighttransform(1.0);
+	glm::vec4 lightpos = glm::vec4(light0.position[0], light0.position[1], light0.position[2], light0.position[3]); // initalize light position
+
+	// Object setup
 	projection = glm::perspective(fov, aspect, near, far);
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "projection", glm::value_ptr(projection));
+
+	rt3d::setLight(mvpShaderProgram, light0);
+	//glm::vec3 pos;
+
 
 	glm::mat4 modelview(1.0);
 	mvStack.push(modelview);
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -4.0f));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar, scalar, scalar));
 	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
-	//MVP = projection * mvStack.top();
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	
@@ -153,11 +190,18 @@ void draw(SDL_Window * window) {
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx-2, dy-2, -4));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar / 2, scalar / 2, scalar / 2));
 	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
-	//MVP = projection * mvStack.top();
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
 	mvStack.pop();
+
+	//Light Transformations
+	lighttransform = glm::translate(lighttransform, glm::vec3(dxl, dyl, 0));
+	lighttransform = glm::scale(lighttransform, glm::vec3(lscalar, lscalar, lscalar));
+	lighttransform = glm::rotate(lighttransform, lr, glm::vec3(0.0f, 1.0f, 0.0f));
+	lightpos = lighttransform * lightpos;
+	GLfloat lightpos2[4] = { lightpos[0],lightpos[1],lightpos[2],lightpos[3] };
+	rt3d::setLightPos(mvpShaderProgram, lightpos2);
 
 
 	SDL_GL_SwapWindow(window); // swap buffers
