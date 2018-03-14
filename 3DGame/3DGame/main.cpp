@@ -129,31 +129,31 @@ void update(void) {
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
 	if (!lightMode) {
-		if (keys[SDL_SCANCODE_W]) dy += 0.01;
-		if (keys[SDL_SCANCODE_S]) dy -= 0.01;
-		if (keys[SDL_SCANCODE_D]) dx += 0.01;
-		if (keys[SDL_SCANCODE_A]) dx -= 0.01;
+		if (keys[SDL_SCANCODE_W]) dy += 0.01f;
+		if (keys[SDL_SCANCODE_S]) dy -= 0.01f;
+		if (keys[SDL_SCANCODE_D]) dx += 0.01f;
+		if (keys[SDL_SCANCODE_A]) dx -= 0.01f;
 
-		if (keys[SDL_SCANCODE_LEFT]) r += 4;
-		if (keys[SDL_SCANCODE_RIGHT]) r -= 4;
-		if (keys[SDL_SCANCODE_UP]) scalar += 0.1;
-		if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1;
+		if (keys[SDL_SCANCODE_LEFT]) r += 4.0f;
+		if (keys[SDL_SCANCODE_RIGHT]) r -= 4.0f;
+		if (keys[SDL_SCANCODE_UP]) scalar += 0.1f;
+		if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1f;
 	}
 	else {
-		if (keys[SDL_SCANCODE_W]) dyl += 0.1;
-		if (keys[SDL_SCANCODE_S]) dyl -= 0.1;
-		if (keys[SDL_SCANCODE_D]) dxl += 0.1;
-		if (keys[SDL_SCANCODE_A]) dxl -= 0.1;
+		if (keys[SDL_SCANCODE_W]) dyl += 10.1f;
+		if (keys[SDL_SCANCODE_S]) dyl -= 10.1f;
+		if (keys[SDL_SCANCODE_D]) dxl += 10.1f;
+		if (keys[SDL_SCANCODE_A]) dxl -= 0.1f;
 
-		if (keys[SDL_SCANCODE_LEFT]) lr += 4;
-		if (keys[SDL_SCANCODE_RIGHT]) lr -= 4;
-		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1;
-		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1;
+		if (keys[SDL_SCANCODE_LEFT]) lr += 4.0f;
+		if (keys[SDL_SCANCODE_RIGHT]) lr -= 4.0f;
+		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
+		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
 	}
-	cout << light0.position[0] << " " <<
-			light0.position[1] << " " << 
-			light0.position[2] << " " <<
-			light0.position[3] << " " << endl;
+	//cout << light0.position[0] << " " <<
+	//		light0.position[1] << " " << 
+	//		light0.position[2] << " " <<
+	//		light0.position[3] << " " << endl;
 
 }
 
@@ -174,7 +174,6 @@ void draw(SDL_Window * window) {
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "projection", glm::value_ptr(projection));
 
 	rt3d::setLight(mvpShaderProgram, light0);
-	//glm::vec3 pos;
 
 
 	glm::mat4 modelview(1.0);
@@ -200,7 +199,12 @@ void draw(SDL_Window * window) {
 	lighttransform = glm::scale(lighttransform, glm::vec3(lscalar, lscalar, lscalar));
 	lighttransform = glm::rotate(lighttransform, lr, glm::vec3(0.0f, 1.0f, 0.0f));
 	lightpos = lighttransform * lightpos;
+	cout << lightpos[0] << " " <<
+		lightpos[1] << " " <<
+		lightpos[2] << " " <<
+		lightpos[3] << " " << endl;
 	GLfloat lightpos2[4] = { lightpos[0],lightpos[1],lightpos[2],lightpos[3] };
+	cout << lightpos2[4] << endl;
 	rt3d::setLightPos(mvpShaderProgram, lightpos2);
 
 

@@ -1,17 +1,4 @@
 ﻿  main.cpp
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(105): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(122): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(132): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(133): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(134): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(135): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(139): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(140): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(143): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(144): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(145): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(146): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(150): warning C4305: '+=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(151): warning C4305: '-=': truncation from 'double' to 'GLfloat'
-c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(204): error C2664: 'void rt3d::setLightPos(const GLuint,const GLfloat *)': cannot convert argument 2 from 'glm::vec4' to 'const GLfloat *'
-  c:\users\b00307864\desktop\temp3drepo\3dgame\3dgame\main.cpp(204): note: No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(105): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(122): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+  3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe
