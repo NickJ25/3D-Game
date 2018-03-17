@@ -140,13 +140,13 @@ void update(void) {
 		if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1f;
 	}
 	else {
-		if (keys[SDL_SCANCODE_W]) dyl += 10.1f;
-		if (keys[SDL_SCANCODE_S]) dyl -= 10.1f;
-		if (keys[SDL_SCANCODE_D]) dxl += 10.1f;
+		if (keys[SDL_SCANCODE_W]) dyl += 0.1f;
+		if (keys[SDL_SCANCODE_S]) dyl -= 0.1f;
+		if (keys[SDL_SCANCODE_D]) dxl += 0.1f;
 		if (keys[SDL_SCANCODE_A]) dxl -= 0.1f;
 
-		if (keys[SDL_SCANCODE_LEFT]) lr += 4.0f;
-		if (keys[SDL_SCANCODE_RIGHT]) lr -= 4.0f;
+		if (keys[SDL_SCANCODE_LEFT]) lr += 0.1f;
+		if (keys[SDL_SCANCODE_RIGHT]) lr -= 0.1f;
 		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
 		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
 	}
@@ -173,10 +173,27 @@ void draw(SDL_Window * window) {
 	projection = glm::perspective(fov, aspect, near, far);
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "projection", glm::value_ptr(projection));
 
-	rt3d::setLight(mvpShaderProgram, light0);
-
-
 	glm::mat4 modelview(1.0);
+	glm::mat4 identity(1.0);
+
+	//Light Object
+	mvStack.push(modelview);
+	rt3d::setLight(mvpShaderProgram, light0);
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dxl, dyl, 0));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(lscalar, lscalar, lscalar));
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+
+	lightpos = glm::vec4(dxl, dyl, 0, 1.0f);
+	cout << "light pos: " << lightpos[0] << " " <<
+		lightpos[1] << " " <<
+		lightpos[2] << " " <<
+		lightpos[3] << endl;
+	rt3d::setLightPos(mvpShaderProgram, glm::value_ptr(lightpos));
+
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	mvStack.pop();
+
+	//Objects
 	mvStack.push(modelview);
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -4.0f));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar, scalar, scalar));
@@ -194,18 +211,17 @@ void draw(SDL_Window * window) {
 	mvStack.pop();
 	mvStack.pop();
 
-	//Light Transformations
-	lighttransform = glm::translate(lighttransform, glm::vec3(dxl, dyl, 0));
-	lighttransform = glm::scale(lighttransform, glm::vec3(lscalar, lscalar, lscalar));
-	lighttransform = glm::rotate(lighttransform, lr, glm::vec3(0.0f, 1.0f, 0.0f));
-	lightpos = lighttransform * lightpos;
-	cout << lightpos[0] << " " <<
-		lightpos[1] << " " <<
-		lightpos[2] << " " <<
-		lightpos[3] << " " << endl;
-	GLfloat lightpos2[4] = { lightpos[0],lightpos[1],lightpos[2],lightpos[3] };
-	cout << lightpos2[4] << endl;
-	rt3d::setLightPos(mvpShaderProgram, lightpos2);
+#pragma region Old Light Code
+	////Light Transformations
+	//rt3d::setLight(mvpShaderProgram, light0);
+	//lighttransform = glm::translate(lighttransform, glm::vec3(dxl, dyl, 0));
+	//lighttransform = glm::scale(lighttransform, glm::vec3(lscalar, lscalar, lscalar));
+	//lighttransform = glm::rotate(lighttransform, lr, glm::vec3(0.0f, 1.0f, 0.0f));
+	//lightpos = lighttransform * lightpos;
+	//GLfloat lightpos2[4] = { lightpos[0],lightpos[1],lightpos[2],lightpos[3] };
+	//rt3d::setLightPos(mvpShaderProgram, lightpos2);
+#pragma endregion
+
 
 
 	SDL_GL_SwapWindow(window); // swap buffers
