@@ -155,6 +155,11 @@
   <ItemGroup>
     <ClInclude Include="rt3d.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="cobble.bmp" />
+    <Image Include="fabric.bmp" />
+    <Image Include="studdedmetal.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

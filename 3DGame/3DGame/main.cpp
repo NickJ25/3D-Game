@@ -21,6 +21,7 @@ using namespace std;
 // Real programs don't use globals :-D
 // Data would normally be read from files
 
+#pragma region Old Cube
 GLfloat cubeVertCount = 8;
 GLfloat cubeVerts[] = { -0.5, -0.5f, -0.5f,
 						-0.5, 0.5f, -0.5f,
@@ -40,6 +41,15 @@ GLfloat cubeColours[] = { 0.0f, 0.0f, 0.0f,
 						1.0f, 1.0f, 1.0f,
 						1.0f, 0.0f, 1.0f };
 
+GLfloat cubeTexCoords[] = { 0.0f, 0.0f,
+							0.0f, 1.0f,
+							1.0f, 1.0f,
+							1.0f, 0.0f,
+							1.0f, 1.0f,
+							1.0f, 0.0f,
+							0.0f, 0.0f,
+							0.0f, 1.0f	};
+
 GLuint cubeIndexCount = 36;
 GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back  
 						1,0,5, 0,4,5, // left					
@@ -47,6 +57,7 @@ GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back
 						1,5,6, 1,6,2, // top
 						0,3,4, 3,7,4, // bottom
 						6,5,4, 7,6,4 }; // front
+#pragma endregion
 
 rt3d::lightStruct light0 = {
 	{ 0.3f, 0.3f, 0.3f, 1.0f }, // ambient
@@ -62,6 +73,13 @@ rt3d::materialStruct material0 = {
 	2.0f // shininess
 };
 
+rt3d::materialStruct material1 = {
+	{0.4f, 0.2f, 0.2f, 0.3f}, // ambient
+	{0.8f, 0.5f, 0.5f, 0.3f}, // diffuse
+	{1.0f, 0.8f, 0.8f, 0.3f}, // specular
+	2.0f // shininess
+};
+
 // Screen Size
 GLfloat screenWidth = 800, screenHeight = 600;
 
@@ -71,7 +89,9 @@ GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)
 // Stack for storing modelview matrix when dealing with multiple matrixes
 stack<glm::mat4> mvStack;
 
-GLuint meshObjects[2];
+GLuint meshObjects[2]; // Array with X amount of Unqiue Objects
+GLuint textures[2]; // Array with X amount of Unique Textures
+
 GLuint mvpShaderProgram;
 GLuint mvpShaderProgam2;
 bool lightMode = false;
@@ -96,6 +116,8 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8); // 8 bit alpha buffering
+
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);  // double buffering on
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4); // Turn on x4 multisampling anti-aliasing (MSAA)
@@ -111,15 +133,66 @@ SDL_Window * setupRC(SDL_GLContext &context) {
 	return window;
 }
 
+//A simple texture loading function (lots of room for improvement
+GLuint loadBitmap(char *fname)
+{
+	GLuint texID;
+	glGenTextures(1, &texID); // generate texture ID
+
+	//load file - using core SDL library
+	SDL_Surface *tmpSurface;
+	tmpSurface = SDL_LoadBMP(fname);
+	if (!tmpSurface)
+	{
+		std::cout << "Error loading bitmap: " << fname << endl;
+	}
+	else {
+		std::cout << fname << " loaded" << endl;
+	}
+
+	// bind texture and set parameters
+	glBindTexture(GL_TEXTURE_2D, texID);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	SDL_PixelFormat *format = tmpSurface->format;
+	GLuint externalFormat, internalFormat;
+	if (format->Amask) {
+		internalFormat = GL_RGBA;
+		externalFormat = (format->Rmask < format->Bmask) ? GL_RGBA : GL_BGRA;
+	}
+	else {
+		internalFormat = GL_RGB;
+		externalFormat = (format->Rmask < format->Bmask) ? GL_RGB : GL_BGR;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, tmpSurface->w, tmpSurface->h, 0,
+		externalFormat, GL_UNSIGNED_BYTE, tmpSurface->pixels);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	SDL_FreeSurface(tmpSurface); // texture loaded, free the temporary buffer
+	return texID;	// return value of texture ID
+
+}
+
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
 	glEnable(GL_DEPTH_TEST);
-	mvpShaderProgram = rt3d::initShaders("phong.vert", "phong.frag");//("mvp.vert", "minimal.frag");
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	mvpShaderProgram = rt3d::initShaders("phong-tex.vert", "phong-tex.frag");
 	rt3d::setLight(mvpShaderProgram, light0);
 	rt3d::setMaterial(mvpShaderProgram, material0);
 
+	textures[0] = loadBitmap("cobble.bmp");
+	textures[1] = loadBitmap("studdedmetal.bmp");
+	textures[2] = loadBitmap("fabric.bmp");
+
 	// Going to create our mesh objects here
-	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, nullptr, cubeIndexCount, cubeIndices);
+	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
 
 }
 
@@ -150,10 +223,6 @@ void update(void) {
 		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
 		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
 	}
-	//cout << light0.position[0] << " " <<
-	//		light0.position[1] << " " << 
-	//		light0.position[2] << " " <<
-	//		light0.position[3] << " " << endl;
 
 }
 
@@ -184,10 +253,6 @@ void draw(SDL_Window * window) {
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 
 	lightpos = glm::vec4(dxl, dyl, 0, 1.0f);
-	cout << "light pos: " << lightpos[0] << " " <<
-		lightpos[1] << " " <<
-		lightpos[2] << " " <<
-		lightpos[3] << endl;
 	rt3d::setLightPos(mvpShaderProgram, glm::value_ptr(lightpos));
 
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
@@ -195,9 +260,11 @@ void draw(SDL_Window * window) {
 
 	//Objects
 	mvStack.push(modelview);
-	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -4.0f));
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -10.0f));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar, scalar, scalar));
 	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	rt3d::setMaterial(mvpShaderProgram, material0);
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	
@@ -206,11 +273,22 @@ void draw(SDL_Window * window) {
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx-2, dy-2, -4));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar / 2, scalar / 2, scalar / 2));
 	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
 	mvStack.pop();
 
+	glDepthMask(GL_FALSE);
+	mvStack.push(modelview);
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx+0.2, dy, -2.0f));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar *0.5, scalar*0.5, scalar*0.5));
+	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
+	glBindTexture(GL_TEXTURE_2D, textures[2]);
+	rt3d::setMaterial(mvpShaderProgram, material1);
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	glDepthMask(GL_TRUE);
 #pragma region Old Light Code
 	////Light Transformations
 	//rt3d::setLight(mvpShaderProgram, light0);
