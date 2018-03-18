@@ -279,6 +279,15 @@ void draw(SDL_Window * window) {
 	mvStack.pop();
 	mvStack.pop();
 
+	mvStack.push(modelview);
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy-1, -10.0f));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(scalar*20, scalar*0.1, scalar*20));
+	mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(1.0f, 1.0f, 0.0f));
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	rt3d::setMaterial(mvpShaderProgram, material0);
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+
 	glDepthMask(GL_FALSE);
 	mvStack.push(modelview);
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx+0.2, dy, -2.0f));
