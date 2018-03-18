@@ -81,7 +81,7 @@ rt3d::materialStruct material1 = {
 };
 
 // Screen Size
-GLfloat screenWidth = 800, screenHeight = 600;
+GLfloat screenWidth = 1280, screenHeight = 720;
 
 // glm perspective settings
 GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)screenHeight), near = 1.0f, far = 50.0f;
@@ -102,9 +102,12 @@ GLfloat dx = 0.0f, dy = 0.0f, dz = 0.0f, r = 0.0f, scalar = 1.0f;
 // Light Settings
 GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
+// Player Settings
+glm::vec3 playerPos(0.0f, 2.0f, 1.0f);
+
 // Camera Settings
 glm::vec3 eye(0.0f, 1.0f, 4.0f);
-glm::vec3 at(0.0f, 1.0f, 3.0f);
+glm::vec3 at(playerPos);
 glm::vec3 up(0.0f, 1.0f, 0.0f);
 
 // Set up rendering context
@@ -217,10 +220,17 @@ void update(void) {
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
 	if (!lightMode) {
-		if (keys[SDL_SCANCODE_W]) eye = moveVert(eye, r, 0.1f); // dz += 0.1f;
-		if (keys[SDL_SCANCODE_S]) eye = moveVert(eye, r, -0.1f);
-		if (keys[SDL_SCANCODE_D]) eye = moveHori(eye, r, 0.1f);
-		if (keys[SDL_SCANCODE_A]) eye = moveHori(eye, r, -0.1f);
+		if (keys[SDL_SCANCODE_W]) playerPos = moveVert(playerPos, r, 0.1f);//eye = moveVert(eye, r, 0.1f); // dz += 0.1f;
+		if (keys[SDL_SCANCODE_S]) playerPos = moveVert(playerPos, r, -0.1f);//eye = moveVert(eye, r, -0.1f);
+		if (keys[SDL_SCANCODE_D]) {
+			//eye = moveHori(eye, r, 0.1f); 
+			r += 2.0f;
+		}
+		if (keys[SDL_SCANCODE_A]) {
+			r -= 2.0f;
+			//eye = moveHori(eye, r, -0.1f); 
+			
+		}
 		if (keys[SDL_SCANCODE_R]) eye.y += 0.1;
 		if (keys[SDL_SCANCODE_F]) eye.y -= 0.1f;
 		if (keys[SDL_SCANCODE_COMMA]) r -= 1.0f;
@@ -240,6 +250,8 @@ void update(void) {
 		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
 		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
 	}
+	eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
+	//at = playerPos;
 
 }
 
@@ -262,16 +274,11 @@ void draw(SDL_Window * window) {
 	glm::mat4 modelview(1.0);
 	glm::mat4 identity(1.0);
 
+
+
+
+	//Camera
 	mvStack.push(modelview);
-	//mvStack.top() = glm::rotate(mvStack.top(), float(r*DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dx, dy, -4.0f+ dz));
-
-	//mvStack.top() = glm::lookAt(glm::vec3(-dx, -dy, -dz), glm::vec3(-dx + 1.0f*std::sin(r*DEG_TO_RADIAN), -dy, -dz - 1.0f*std::cos(r*DEG_TO_RADIAN)), glm::vec3(0, 1, 0));
-
-	//eye.x = -dx; eye.y = -dy; eye.z = -dz;
-	//at.x = -dx + 1.0f*std::sin(r*DEG_TO_RADIAN);
-	//at.y = -dy; at.z = -dz - 1.0f*std::cos(r*DEG_TO_RADIAN);
-
 	at = moveVert(eye, r, 1.0f);
 	mvStack.top() = glm::lookAt(eye, at, up);
 
@@ -287,6 +294,17 @@ void draw(SDL_Window * window) {
 	glm::vec4 tmp = mvStack.top()*lightpos;
 	rt3d::setLightPos(mvpShaderProgram, glm::value_ptr(tmp));
 
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	mvStack.pop();
+
+	//Player
+	mvStack.push(mvStack.top());
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(playerPos));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(1.0f, 3.0f, 1.0f));
+	mvStack.top() = glm::rotate(mvStack.top(), float(-r*DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
+	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	rt3d::setMaterial(mvpShaderProgram, material0);
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
 

@@ -1,5 +1,5 @@
 ﻿  main.cpp
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(132): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(200): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(224): warning C4305: '+=': truncation from 'double' to 'float'
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(135): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(203): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(234): warning C4305: '+=': truncation from 'double' to 'float'
   3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe
