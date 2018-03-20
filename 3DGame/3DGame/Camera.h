@@ -1,0 +1,24 @@
+#pragma once
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+using namespace glm;
+
+class Camera{
+private:
+	//vec3 targetPos;
+	vec3 eye;
+	vec3 at;
+	vec3 up;
+public:
+	Camera(vec3 targetPos, vec3 eye, vec3 up) : at(targetPos), eye(eye), up(up) {
+		//at = targetPos;
+	}
+	virtual ~Camera() {}
+
+	void update();
+	mat4 transform(mat4 mat);
+	
+};

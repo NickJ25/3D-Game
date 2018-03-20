@@ -12,6 +12,7 @@
 
 #include <stack>
 #include "rt3d.h"
+#include "Camera.h"
 
 #define DEG_TO_RADIAN 0.017453293
 
@@ -106,9 +107,10 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 glm::vec3 playerPos(0.0f, 2.0f, 1.0f);
 
 // Camera Settings
-glm::vec3 eye(0.0f, 1.0f, 4.0f);
-glm::vec3 at(playerPos);
-glm::vec3 up(0.0f, 1.0f, 0.0f);
+Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
+//glm::vec3 eye(0.0f, 1.0f, 4.0f);
+//glm::vec3 at(playerPos);
+//glm::vec3 up(0.0f, 1.0f, 0.0f);
 
 // Set up rendering context
 SDL_Window * setupRC(SDL_GLContext &context) {
@@ -231,8 +233,8 @@ void update(void) {
 			//eye = moveHori(eye, r, -0.1f); 
 			
 		}
-		if (keys[SDL_SCANCODE_R]) eye.y += 0.1;
-		if (keys[SDL_SCANCODE_F]) eye.y -= 0.1f;
+		//if (keys[SDL_SCANCODE_R]) eye.y += 0.1;
+		//if (keys[SDL_SCANCODE_F]) eye.y -= 0.1f;
 		if (keys[SDL_SCANCODE_COMMA]) r -= 1.0f;
 		if (keys[SDL_SCANCODE_PERIOD]) r += 1.0f;
 
@@ -250,7 +252,7 @@ void update(void) {
 		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
 		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
 	}
-	eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
+	//eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
 	//at = playerPos;
 
 }
@@ -279,9 +281,16 @@ void draw(SDL_Window * window) {
 
 	//Camera
 	mvStack.push(modelview);
-	at = moveVert(eye, r, 1.0f);
-	mvStack.top() = glm::lookAt(eye, at, up);
+	//at = moveVert(eye, r, 1.0f);
+	
+	at = playerPos;
+	eye = glm::vec3(
+		20 * cos(20 * DEG_TO_RADIAN)*cos(r*DEG_TO_RADIAN) + playerPos.x,
+		20 * sin(20 * DEG_TO_RADIAN) * cos(20 * DEG_TO_RADIAN) + playerPos.y,
+		20 * sin(20 * DEG_TO_RADIAN) + playerPos.z);
 
+
+	mvStack.top() = glm::lookAt(eye, at, up);
 
 	//Light Object
 	mvStack.push(mvStack.top());

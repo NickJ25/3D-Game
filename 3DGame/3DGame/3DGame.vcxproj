@@ -138,8 +138,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md2model.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="rt3d.cpp" />
     <ClCompile Include="rt3dObjLoader.cpp" />
   </ItemGroup>
@@ -155,7 +157,11 @@
     <None Include="simple.frag" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3DEntity.h" />
+    <ClInclude Include="anorms.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="md2model.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="rt3d.h" />
     <ClInclude Include="rt3dObjLoader.h" />
   </ItemGroup>
