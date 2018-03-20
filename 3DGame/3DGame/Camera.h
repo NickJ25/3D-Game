@@ -6,6 +6,8 @@
 
 using namespace glm;
 
+#define DEG_TO_RADIAN 0.017453293
+
 class Camera{
 private:
 	//vec3 targetPos;

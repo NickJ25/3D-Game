@@ -1,8 +1,6 @@
-﻿  Camera.cpp
-  main.cpp
-c:\users\cooki\desktop\git repos\3dgamesrepo\3dgame\3dgame\main.cpp(135): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-c:\users\cooki\desktop\git repos\3dgamesrepo\3dgame\3dgame\main.cpp(203): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
-c:\users\cooki\desktop\git repos\3dgamesrepo\3dgame\3dgame\main.cpp(234): warning C4305: '+=': truncation from 'double' to 'float'
-  Player.cpp
-  Generating Code...
-  3DGame.vcxproj -> C:\Users\cooki\Desktop\Git repos\3DGamesRepo\3DGame\Debug\3DGame.exe
+﻿  main.cpp
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(40): warning C4005: 'WIN32': macro redefinition
+  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(40): note: command-line arguments:  see previous definition of 'WIN32'
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(143): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(215): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+  3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe

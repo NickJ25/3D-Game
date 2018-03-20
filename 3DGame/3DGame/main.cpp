@@ -12,6 +12,7 @@
 
 #include <stack>
 #include "rt3d.h"
+#include "md2model.h"
 #include "Camera.h"
 
 #define DEG_TO_RADIAN 0.017453293
@@ -90,8 +91,8 @@ GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)
 // Stack for storing modelview matrix when dealing with multiple matrixes
 stack<glm::mat4> mvStack;
 
-GLuint meshObjects[2]; // Array with X amount of Unqiue Objects
-GLuint textures[2]; // Array with X amount of Unique Textures
+GLuint meshObjects[3]; // Array with X amount of Unqiue Objects
+GLuint textures[3]; // Array with X amount of Unique Textures
 
 GLuint mvpShaderProgram;
 GLuint mvpShaderProgam2;
@@ -107,10 +108,15 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 glm::vec3 playerPos(0.0f, 2.0f, 1.0f);
 
 // Camera Settings
-Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
-//glm::vec3 eye(0.0f, 1.0f, 4.0f);
-//glm::vec3 at(playerPos);
-//glm::vec3 up(0.0f, 1.0f, 0.0f);
+//Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
+glm::vec3 eye(0.0f, 1.0f, 4.0f);
+glm::vec3 at(playerPos);
+glm::vec3 up(0.0f, 1.0f, 0.0f);
+
+//MD2 Stuff
+GLuint md2VertCount = 0;
+md2model tmpModel;
+int currentAnim = 0;
 
 // Set up rendering context
 SDL_Window * setupRC(SDL_GLContext &context) {
@@ -201,6 +207,10 @@ void init(void) {
 	textures[1] = loadBitmap("studdedmetal.bmp");
 	textures[2] = loadBitmap("fabric.bmp");
 
+	//textures[3] = loadBitmap("hobgoblin2.bmp");
+	//meshObjects[3] = tmpModel.ReadMD2Model("tris.MD2");
+	md2VertCount = tmpModel.getVertDataCount();
+ 
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
 
@@ -282,15 +292,15 @@ void draw(SDL_Window * window) {
 	//Camera
 	mvStack.push(modelview);
 	//at = moveVert(eye, r, 1.0f);
-	
+	//mvStack.top() = camera.transform(mvStack.top());
 	at = playerPos;
-	eye = glm::vec3(
-		20 * cos(20 * DEG_TO_RADIAN)*cos(r*DEG_TO_RADIAN) + playerPos.x,
+    eye = glm::vec3(
+		20 * cos(-r * DEG_TO_RADIAN)*cos(20 *DEG_TO_RADIAN) + playerPos.x,
 		20 * sin(20 * DEG_TO_RADIAN) * cos(20 * DEG_TO_RADIAN) + playerPos.y,
 		20 * sin(20 * DEG_TO_RADIAN) + playerPos.z);
-
-
 	mvStack.top() = glm::lookAt(eye, at, up);
+
+
 
 	//Light Object
 	mvStack.push(mvStack.top());
@@ -334,6 +344,20 @@ void draw(SDL_Window * window) {
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
+
+	//// draw the hobgoblin
+	//glCullFace(GL_FRONT);
+	//glBindTexture(GL_TEXTURE_2D, textures[1]);
+	//rt3d::materialStruct tmpMaterial = material1;
+	//rt3d::setMaterial(mvpShaderProgram, tmpMaterial);
+	//mvStack.push(mvStack.top());
+	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(1.0f, 1.2f, -5.0f));
+	//mvStack.top() = glm::rotate(mvStack.top(), float(90.0f*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
+	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(1 * 0.05, 1 * 0.05, 1 * 0.05));
+	//rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+	//rt3d::drawMesh(meshObjects[1], md2VertCount, GL_TRIANGLES);
+	//mvStack.pop();
+	//glCullFace(GL_BACK);
 
 	glDepthMask(GL_FALSE);
 	mvStack.push(mvStack.top());
