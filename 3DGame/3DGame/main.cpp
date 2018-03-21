@@ -93,7 +93,7 @@ GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)
 stack<glm::mat4> mvStack;
 
 GLuint meshObjects[4]; // Array with X amount of Unqiue Objects
-GLuint textures[4]; // Array with X amount of Unique Textures
+GLuint textures[5]; // Array with X amount of Unique Textures
 
 GLuint mvpShaderProgram;
 GLuint mvpShaderProgam2;
@@ -108,7 +108,7 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 // Player Settings
 glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
-GLfloat tempVel=30;
+GLfloat tempVel = 0;//30;
 
 // Camera Settings
 //Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -206,6 +206,7 @@ void init(void) {
 	textures[1] = loadBitmap("studdedmetal.bmp");
 	textures[2] = loadBitmap("fabric.bmp");
 	textures[3] = loadBitmap("hobgoblin2.bmp");
+	textures[4] = loadBitmap("car.bmp");
 
 	meshObjects[3] = tmpModel.ReadMD2Model("tris.MD2");
 	meshObjects[4] = tmpModel2.ReadMD2Model("policecar.md2");
@@ -278,7 +279,7 @@ void update(void) {
 	}
 	//eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
 	//at = playerPos;
-	tempVel -= 0.1;
+	tempVel;// -= 0.1;
 	carPos = glm::vec3(tempVel, carPos.y, carPos.z);
 
 }
@@ -381,7 +382,7 @@ void draw(SDL_Window * window) {
 
 	// draw car
 	glCullFace(GL_FRONT);
-	glBindTexture(GL_TEXTURE_2D, textures[3]);
+	glBindTexture(GL_TEXTURE_2D, textures[4]);
 	//rt3d::materialStruct tmpMaterial = material0;
 	rt3d::setMaterial(mvpShaderProgram, tmpMaterial);
 	mvStack.push(mvStack.top());
