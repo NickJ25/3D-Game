@@ -14,7 +14,7 @@
 #include "rt3d.h"
 #include "md2model.h"
 #include "Camera.h"
-#include "Player.h"
+//#include "Player.h"
 
 #define DEG_TO_RADIAN 0.017453293
 
@@ -92,7 +92,7 @@ GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)
 // Stack for storing modelview matrix when dealing with multiple matrixes
 stack<glm::mat4> mvStack;
 
-GLuint meshObjects[3]; // Array with X amount of Unqiue Objects
+GLuint meshObjects[4]; // Array with X amount of Unqiue Objects
 GLuint textures[4]; // Array with X amount of Unique Textures
 
 GLuint mvpShaderProgram;
@@ -106,7 +106,9 @@ GLfloat dx = 0.0f, dy = 0.0f, dz = 0.0f, r = 0.0f, scalar = 1.0f;
 GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
 // Player Settings
-glm::vec3 playerPos(0.0f, 2.0f, 1.0f);
+glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
+glm::vec3 carPos(0.0f, -1.0f, -10.0f);
+GLfloat tempVel=30;
 
 // Camera Settings
 //Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -116,8 +118,8 @@ glm::vec3 up(0.0f, 1.0f, 0.0f);
 GLfloat cameraDistance = 5.0f;
 
 //MD2 Stuff
-GLuint md2VertCount = 0;
-md2model tmpModel;
+GLuint md2VertCount = 0, md2VertCount2 = 0;
+md2model tmpModel, tmpModel2;
 int currentAnim = 0;
 
 // Set up rendering context
@@ -206,7 +208,9 @@ void init(void) {
 	textures[3] = loadBitmap("hobgoblin2.bmp");
 
 	meshObjects[3] = tmpModel.ReadMD2Model("tris.MD2");
+	meshObjects[4] = tmpModel2.ReadMD2Model("policecar.md2");
 	md2VertCount = tmpModel.getVertDataCount();
+	md2VertCount2 = tmpModel2.getVertDataCount();
  
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
@@ -274,6 +278,8 @@ void update(void) {
 	}
 	//eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
 	//at = playerPos;
+	tempVel -= 0.1;
+	carPos = glm::vec3(tempVel, carPos.y, carPos.z);
 
 }
 
@@ -373,6 +379,22 @@ void draw(SDL_Window * window) {
 	mvStack.pop();
 	glCullFace(GL_BACK);
 
+	// draw car
+	glCullFace(GL_FRONT);
+	glBindTexture(GL_TEXTURE_2D, textures[3]);
+	//rt3d::materialStruct tmpMaterial = material0;
+	rt3d::setMaterial(mvpShaderProgram, tmpMaterial);
+	mvStack.push(mvStack.top());
+
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(carPos));
+	//mvStack.top() = glm::rotate(mvStack.top(), float(-r * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvStack.top() = glm::rotate(mvStack.top(), float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
+	mvStack.top() = glm::rotate(mvStack.top(), float(90.0*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(1 * 0.1, 1 * 0.1, 1 * 0.1));
+	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+	rt3d::drawMesh(meshObjects[4], md2VertCount2, GL_TRIANGLES);
+	mvStack.pop();
+	glCullFace(GL_BACK);
 #pragma endregion
 
 	//Objects
