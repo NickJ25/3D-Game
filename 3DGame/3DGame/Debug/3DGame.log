@@ -1,6 +1,8 @@
 ﻿  main.cpp
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(40): warning C4005: 'WIN32': macro redefinition
-  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(40): note: command-line arguments:  see previous definition of 'WIN32'
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(143): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(215): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
-  3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe
+c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\md2model.h(40): warning C4005: 'WIN32': macro redefinition
+  c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\md2model.h(40): note: command-line arguments:  see previous definition of 'WIN32'
+c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(144): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(211): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+c:\users\b00307864\desktop\3dgamerepo\3dgame\3dgame\main.cpp(354): warning C4305: 'argument': truncation from 'double' to 'float'
+  3DGame.vcxproj -> C:\Users\B00307864\Desktop\3DGameRepo\3DGame\Debug\3DGame.exe
+  3DGame.vcxproj -> C:\Users\B00307864\Desktop\3DGameRepo\3DGame\Debug\3DGame.pdb (Partial PDB)

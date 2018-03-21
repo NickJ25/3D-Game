@@ -3,11 +3,14 @@
 
 using namespace glm;
 
-class Entity
+class 3DEntity
 {
 public:
 
 	virtual vec2 getPosition() = 0;
-	virtual void update(float dt) = 0;
-	virtual void draw(int width, int height) = 0;
+	virtual vec2 setPosition(vec2 pos) = 0;
+
+
+	virtual void update() = 0;
+	virtual void draw(mat4 matrix) = 0;
 };
