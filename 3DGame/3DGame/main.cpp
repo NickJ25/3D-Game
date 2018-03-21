@@ -14,6 +14,7 @@
 #include "rt3d.h"
 #include "md2model.h"
 #include "Camera.h"
+#include "Player.h"
 
 #define DEG_TO_RADIAN 0.017453293
 

@@ -157,7 +157,7 @@
     <None Include="simple.frag" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="3DEntity.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="anorms.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="md2model.h" />
