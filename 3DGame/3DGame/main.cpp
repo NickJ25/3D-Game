@@ -94,9 +94,10 @@ stack<glm::mat4> mvStack;
 
 GLuint meshObjects[4]; // Array with X amount of Unqiue Objects
 GLuint textures[5]; // Array with X amount of Unique Textures
+GLuint skybox[5]; // Array with X amount of Unique Skyboxes
 
 GLuint mvpShaderProgram;
-GLuint mvpShaderProgam2;
+GLuint skyboxProgram;
 bool lightMode = false;
 
 // Object Settings
@@ -198,6 +199,7 @@ GLuint loadBitmap(char *fname)
 
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
+	skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
 	mvpShaderProgram = rt3d::initShaders("phong-tex.vert", "phong-tex.frag");
 	rt3d::setLight(mvpShaderProgram, light0);
 	rt3d::setMaterial(mvpShaderProgram, material0);
@@ -212,6 +214,9 @@ void init(void) {
 	meshObjects[4] = tmpModel2.ReadMD2Model("policecar.md2");
 	md2VertCount = tmpModel.getVertDataCount();
 	md2VertCount2 = tmpModel2.getVertDataCount();
+
+	skybox[0] = loadBitmap("side1.bmp");
+	skybox[2] = loadBitmap("side1.bmp");
  
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
@@ -303,8 +308,6 @@ void draw(SDL_Window * window) {
 	glm::mat4 modelview(1.0);
 	glm::mat4 identity(1.0);
 
-
-
 #pragma region Camera
 	//Camera
 	mvStack.push(modelview);
@@ -328,6 +331,44 @@ void draw(SDL_Window * window) {
 	// need to calculate "eye", which equals at + vec_offset
 	eye = playerPos + offset;
 	mvStack.top() = glm::lookAt(eye, at, up);
+#pragma endregion
+
+#pragma region SkyBox
+	glUseProgram(skyboxProgram);
+	rt3d::setUniformMatrix4fv(skyboxProgram, "projection", glm::value_ptr(projection));
+
+	glDepthMask(GL_FALSE);
+	glm::mat3 mvRotOnlyMat3 = glm::mat3(mvStack.top());
+	mvStack.push(glm::mat4(mvRotOnlyMat3));
+
+	// front
+	mvStack.push(mvStack.top());
+	glBindTexture(GL_TEXTURE_2D, skybox[0]);
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 0.0f, -2.0f));
+	rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	mvStack.pop();
+
+	// back
+
+	// left
+	mvStack.push(mvStack.top());
+	glBindTexture(GL_TEXTURE_2D, skybox[2]);
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
+	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(-2.0f, 0.0f, 0.0f));
+	rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
+	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	mvStack.pop();
+
+	// right
+
+	// top
+
+	mvStack.pop();
+	glDepthMask(GL_TRUE);
+	glUseProgram(mvpShaderProgram);
+
 #pragma endregion
 
 
