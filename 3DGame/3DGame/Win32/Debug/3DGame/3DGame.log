@@ -1,7 +1,16 @@
-﻿  main.cpp
+﻿  Skybox.cpp
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.h(62): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.cpp(26): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.cpp(35): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.cpp(44): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.cpp(53): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.cpp(62): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+  main.cpp
 d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(40): warning C4005: 'WIN32': macro redefinition
   d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(40): note: command-line arguments:  see previous definition of 'WIN32'
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(148): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(222): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(403): warning C4305: 'argument': truncation from 'double' to 'float'
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\skybox.h(62): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(151): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(228): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(433): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
   3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe
