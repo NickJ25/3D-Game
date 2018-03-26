@@ -15,7 +15,7 @@
 #include "md2model.h"
 #include "Camera.h"
 #include "Skybox.h"
-//#include "Player.h"
+#include "Player.h"
 
 #define DEG_TO_RADIAN 0.017453293
 
@@ -97,7 +97,7 @@ GLuint meshObjects[6]; // Array with X amount of Unqiue Objects
 GLuint textures[5]; // Array with X amount of Unique Textures
 GLuint skybox[5]; // Array with X amount of Unique Skyboxes
 
-Skybox skyBox(skybox);
+//Skybox skyBox(skybox);
 
 GLuint mvpShaderProgram;
 GLuint skyboxProgram;
@@ -111,6 +111,7 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
 // Player Settings
 glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
+Player player("tris.MD", playerPos, material0, textures[3]);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
 
@@ -341,6 +342,7 @@ void draw(SDL_Window * window) {
 
 #pragma region SkyBox
 	//skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
+
 	//glUseProgram(skyboxProgram);
 	//rt3d::setUniformMatrix4fv(skyboxProgram, "projection", glm::value_ptr(projection));
 
@@ -401,6 +403,7 @@ void draw(SDL_Window * window) {
 
 #pragma endregion
 
+	mvStack.top() = player.draw(mvStack.top(), mvpShaderProgram);
 
 	//Light Object
 	mvStack.push(mvStack.top());
