@@ -111,7 +111,7 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
 // Player Settings
 glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
-Player player("tris.MD", playerPos, material0, textures[3]);
+Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0, textures[3]);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
 
@@ -219,11 +219,14 @@ void init(void) {
 	md2VertCount = tmpModel.getVertDataCount();
 	md2VertCount2 = tmpModel2.getVertDataCount();
 
+	player.init();
+
 	skybox[0] = loadBitmap("violentdays_bk.bmp");
 	skybox[1] = loadBitmap("violentdays_rt.bmp");
 	skybox[2] = loadBitmap("violentdays_ft.bmp");
     skybox[3] = loadBitmap("violentdays_lf.bmp");
 	skybox[4] = loadBitmap("violentdays_up.bmp");
+
  
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
@@ -403,7 +406,7 @@ void draw(SDL_Window * window) {
 
 #pragma endregion
 
-	mvStack.top() = player.draw(mvStack.top(), mvpShaderProgram);
+
 
 	//Light Object
 	mvStack.push(mvStack.top());
@@ -418,6 +421,8 @@ void draw(SDL_Window * window) {
 
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
+
+	player.draw(mvStack.top(), mvpShaderProgram);
 
 	//Player
 	//mvStack.push(mvStack.top());
