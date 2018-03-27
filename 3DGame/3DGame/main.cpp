@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "Skybox.h"
 #include "Player.h"
+#include "AABB.h" // temp
 
 #define DEG_TO_RADIAN 0.017453293
 
@@ -115,6 +116,8 @@ glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
 Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
+
+AABB testAABB(playerPos, 0.5, 0.5, 0.5);
 
 // Camera Settings
 //Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
@@ -251,28 +254,34 @@ glm::vec3 moveHori(glm::vec3 pos, GLfloat angle, GLfloat d) {
 		pos.y, pos.z + d * std::sin(angle*DEG_TO_RADIAN));
 }
 
+bool TestAABBAABB(AABB* a, AABB b) // Checks all axis to see if there was an intersection (Base code taken from Real Time Collision Detection by 
+{
+	if (abs(a->getPosition().x - b.getPosition().x) > (a->getSize().x + b.getSize().x)) return false;
+	if (abs(a->getPosition().y - b.getPosition().y) > (a->getSize().y + b.getSize().y)) return false;
+	if (abs(a->getPosition().z - b.getPosition().z) > (a->getSize().z + b.getSize().z)) return false;
+	return true;
+}
+
 void update(void) {
 
 	// Keyboard inputs
-	currentAnim = 0;
+	currentAnim = 0; // set player animation to idle
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
 	if (!lightMode) {
 		if (keys[SDL_SCANCODE_W]) {
 			playerPos = moveVert(playerPos, r, 0.1f);
-			currentAnim = 1;
-		}//eye = moveVert(eye, r, 0.1f); // dz += 0.1f;
+			currentAnim = 1; // change player animation to walking
+		}
 		if (keys[SDL_SCANCODE_S]) {
 			playerPos = moveVert(playerPos, r, -0.1f);
-			currentAnim = 1;
-		}//eye = moveVert(eye, r, -0.1f);
+			currentAnim = 1; // change player animation to walking
+		}
 		if (keys[SDL_SCANCODE_D]) {
-			//eye = moveHori(eye, r, 0.1f); 
-			r += 2.0f;
+			r += 2.0f; // increase rotation
 		}
 		if (keys[SDL_SCANCODE_A]) {
-			r -= 2.0f;
-			//eye = moveHori(eye, r, -0.1f); 
+			r -= 2.0f; // decrease rotation
 			
 		}
 		//if (keys[SDL_SCANCODE_R]) eye.y += 0.1;
@@ -294,11 +303,19 @@ void update(void) {
 		if (keys[SDL_SCANCODE_RIGHT]) lr -= 0.1f;
 		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
 		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
-	}
+	} 
 	//eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
 	//at = playerPos;
 	tempVel;// -= 0.1;
 	carPos = glm::vec3(tempVel, carPos.y, carPos.z);
+
+	// Collision Testing
+	player.update();
+	testAABB.setPosition(playerPos);
+	cout << "Object Pos: " << player.getPosition().x << " " << player.getPosition().z << " | Player Pos: " << playerPos.x << " " << playerPos.y << endl;
+	if (TestAABBAABB(player.getCollision(), testAABB) == true) {
+		cout << "COLLISION BOI" << endl;
+	}
 
 }
 

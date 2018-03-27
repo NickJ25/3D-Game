@@ -26,12 +26,11 @@ private:
 	md2model model;
 	int currentAnim = 0;
 	const char *filename;
+	AABB* collisionBox = new AABB(position, 0.5, 0.5, 0.5);
 
-	AABB* collisionBox;
 
 public:
 	Player(const char *filename, vec3 position, rt3d::materialStruct material) : filename(filename), position(position), material(material) {
-
 	}
 
 	virtual ~Player() {
@@ -41,6 +40,8 @@ public:
 
 	vec3 getPosition();
 	vec3 setPosition(vec3 pos);
+
+	AABB* getCollision();
 
 	void init(GLuint texture);
 	void update();

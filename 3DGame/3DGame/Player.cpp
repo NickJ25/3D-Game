@@ -10,6 +10,11 @@ vec3 Player::setPosition(vec3 pos)
 	return vec3();
 }
 
+AABB* Player::getCollision()
+{
+	return collisionBox;
+}
+
 void Player::init(GLuint texture)
 {
 	meshObject = model.ReadMD2Model(filename);
@@ -19,6 +24,7 @@ void Player::init(GLuint texture)
 
 void Player::update()
 {
+	collisionBox->setPosition(position);
 }
 
 void Player::draw(mat4 matrix, GLuint shaderProgram)

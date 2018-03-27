@@ -1,19 +1,7 @@
-﻿  Player.cpp
+﻿  main.cpp
 d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): warning C4005: 'WIN32': macro redefinition
   d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): note: command-line arguments:  see previous definition of 'WIN32'
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(33): error C2440: 'initializing': cannot convert from 'const char *' to 'char *'
-  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(33): note: Conversion loses qualifiers
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(33): error C2439: 'Player::filename': member could not be initialized
-  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(28): note: see declaration of 'Player::filename'
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.cpp(26): warning C4305: 'argument': truncation from 'double' to 'float'
-  main.cpp
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): warning C4005: 'WIN32': macro redefinition
-  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): note: command-line arguments:  see previous definition of 'WIN32'
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(33): error C2440: 'initializing': cannot convert from 'const char *' to 'char *'
-  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(33): note: Conversion loses qualifiers
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(33): error C2439: 'Player::filename': member could not be initialized
-  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.h(28): note: see declaration of 'Player::filename'
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(153): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(235): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
-d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(438): warning C4305: 'argument': truncation from 'double' to 'float'
-  Generating Code...
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(156): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(238): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(455): warning C4305: 'argument': truncation from 'double' to 'float'
+  3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe

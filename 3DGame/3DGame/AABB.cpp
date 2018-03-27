@@ -1,6 +1,16 @@
 #include "AABB.h"
 
-vec2 AABB::getPosition()
+vec3 AABB::getPosition()
 {
-	return vec2();
+	return position;
+}
+
+void AABB::setPosition(vec3 newPos)
+{
+	position = newPos;
+}
+
+vec3 AABB::getSize()
+{
+	return vec3(rx,ry,rz); // Returns the Width, Height and Depth
 }

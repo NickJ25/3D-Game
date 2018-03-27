@@ -15,6 +15,8 @@ public:
 	}
 	virtual ~AABB() {};
 
-	vec2 getPosition();
+	vec3 getPosition();
+	void setPosition(vec3 newPos);
+	vec3 getSize();
 
 };
