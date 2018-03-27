@@ -1,11 +1,9 @@
 #pragma once
 #include "Entity.h"
 #include "md2model.h"
-#include <iostream>
 
 
 using namespace glm;
-using namespace std;
 
 class Player
 {
@@ -20,28 +18,31 @@ private:
 	2.0f // shininess
 	};
 
-	GLuint texture;
 
-	// Model and Animation variables
+	// Model and Animation variables 
 	GLuint meshObject;
+	GLuint modelTexture;
 	GLuint md2VertCount = 0;
 	md2model model;
 	int currentAnim = 0;
 	const char *filename;
 
+	AABB* collisionBox;
+
 public:
-	Player(const char *filename, vec3 position, rt3d::materialStruct material, GLuint texture) : filename(filename), position(position), material(material), texture(texture) {
+	Player(const char *filename, vec3 position, rt3d::materialStruct material) : filename(filename), position(position), material(material) {
 
 	}
 
 	virtual ~Player() {
+		delete collisionBox;
 		delete filename;
 	}
 
 	vec3 getPosition();
 	vec3 setPosition(vec3 pos);
 
-	void init();
+	void init(GLuint texture);
 	void update();
 	void draw(mat4 matrix, GLuint shaderProgram);
 };

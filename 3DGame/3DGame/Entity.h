@@ -1,6 +1,7 @@
 #pragma once
 #include <glm\glm.hpp>
 #include <GL/glew.h>
+#include "AABB.h"
 
 #define DEG_TO_RADIAN 0.017453293
 

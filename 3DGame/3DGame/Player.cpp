@@ -10,10 +10,11 @@ vec3 Player::setPosition(vec3 pos)
 	return vec3();
 }
 
-void Player::init()
+void Player::init(GLuint texture)
 {
 	meshObject = model.ReadMD2Model(filename);
 	md2VertCount = model.getVertDataCount();
+	modelTexture = texture;
 }
 
 void Player::update()
@@ -26,7 +27,7 @@ void Player::draw(mat4 matrix, GLuint shaderProgram)
 	rt3d::updateMesh(meshObject, RT3D_VERTEX, model.getAnimVerts(), model.getVertDataSize());
 	glm::mat4 modelview(1.0);
 	glCullFace(GL_FRONT);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, modelTexture);
 	rt3d::materialStruct tmpMaterial = material;
 	rt3d::setMaterial(shaderProgram, tmpMaterial);
 

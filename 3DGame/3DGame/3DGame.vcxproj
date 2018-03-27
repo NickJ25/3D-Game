@@ -139,7 +139,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Car.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md2model.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -161,6 +163,8 @@
     <None Include="textured.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB.h" />
+    <ClInclude Include="Car.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="anorms.h" />
     <ClInclude Include="Camera.h" />

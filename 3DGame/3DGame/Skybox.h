@@ -48,24 +48,17 @@ private:
 							6,5,4, 7,6,4 }; // front
 
 
-	GLuint meshObjects;// = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
+	GLuint meshObjects = 5; //= rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
 
 
 public:
-	Skybox(GLuint skyboxT[4]){
-		skyboxTex[0] = skyboxT[0];
-		skyboxTex[1] = skyboxT[1];
-		skyboxTex[2] = skyboxT[2];
-		skyboxTex[3] = skyboxT[3];
-		skyboxTex[4] = skyboxT[4];
+	Skybox(){
 
-		GLuint meshObjects = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
-		skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
 
 
 	}
 
+	void init(GLuint skyboxT[4]);
 	void update();
-
 	void draw(glm::mat4 mvp, glm::mat4 projection, GLuint mvpProgram);
 };

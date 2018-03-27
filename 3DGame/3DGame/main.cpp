@@ -22,7 +22,6 @@
 using namespace std;
 
 // Globals
-// Real programs don't use globals :-D
 // Data would normally be read from files
 
 #pragma region Old Cube
@@ -93,11 +92,13 @@ GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)
 // Stack for storing modelview matrix when dealing with multiple matrixes
 stack<glm::mat4> mvStack;
 
-GLuint meshObjects[6]; // Array with X amount of Unqiue Objects
+GLuint meshObjects[6]; // Array with X amount of Unique Objects
 GLuint textures[5]; // Array with X amount of Unique Textures
 GLuint skybox[5]; // Array with X amount of Unique Skyboxes
 
-//Skybox skyBox(skybox);
+
+
+Skybox skyBox;
 
 GLuint mvpShaderProgram;
 GLuint skyboxProgram;
@@ -111,7 +112,7 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
 // Player Settings
 glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
-Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0, textures[3]);
+Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
 
@@ -203,7 +204,7 @@ GLuint loadBitmap(char *fname)
 
 void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
-	//skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
+	skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
 	mvpShaderProgram = rt3d::initShaders("phong-tex.vert", "phong-tex.frag");
 	rt3d::setLight(mvpShaderProgram, light0);
 	rt3d::setMaterial(mvpShaderProgram, material0);
@@ -219,13 +220,15 @@ void init(void) {
 	md2VertCount = tmpModel.getVertDataCount();
 	md2VertCount2 = tmpModel2.getVertDataCount();
 
-	player.init();
+	player.init(textures[3]);
 
 	skybox[0] = loadBitmap("violentdays_bk.bmp");
 	skybox[1] = loadBitmap("violentdays_rt.bmp");
 	skybox[2] = loadBitmap("violentdays_ft.bmp");
     skybox[3] = loadBitmap("violentdays_lf.bmp");
 	skybox[4] = loadBitmap("violentdays_up.bmp");
+	
+	skyBox.init(skybox);
 
  
 	// Going to create our mesh objects here
@@ -319,37 +322,31 @@ void draw(SDL_Window * window) {
 	glm::mat4 identity(1.0);
 
 #pragma region Camera
-	//Camera
+
 	mvStack.push(modelview);
 
-	// calculate the angle of the vector long which to offset the camera
-	//	r_cam = r - 180 degrees
+	// rotation amount (r = rotation amount), - 270 so player starts facing forward.
 	GLfloat r_cam = r - 270;
-	std::cout << "r_cam: " << r_cam << std::endl;
 
 	// calculate unit vector [x, y] on unit circle using cos, sin of angle
 	vec3 offset(cameraDistance*cos(r_cam*DEG_TO_RADIAN), cameraDistance *0.5, cameraDistance* sin(r_cam*DEG_TO_RADIAN));
 
-	// scale the vector by the desired offset range, e.g. 1m
-	//vec3 offset = cameraDistance;
-	//cameraDistance
-	// the result is the camera displacement vector in xz (vec_offset)
+	at = playerPos; // Look at the player's position
 
-	// at is known (playerPos)
-	at = playerPos;
-	// up is knowm (0,1,0)
-	// need to calculate "eye", which equals at + vec_offset
+	// eye (Camera's position) + the rotation
 	eye = playerPos + offset;
 	mvStack.top() = glm::lookAt(eye, at, up);
+
 #pragma endregion
 
 #pragma region SkyBox
-	//skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
+
+	skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
 
 	//glUseProgram(skyboxProgram);
 	//rt3d::setUniformMatrix4fv(skyboxProgram, "projection", glm::value_ptr(projection));
 
-	//glDepthMask(GL_FALSE);
+	//glDepthMask(GL_FALSE); // make sure depth test is off
 	//glm::mat3 mvRotOnlyMat3 = glm::mat3(mvStack.top());
 	//mvStack.push(glm::mat4(mvRotOnlyMat3));
 
