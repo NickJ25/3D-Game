@@ -9,7 +9,7 @@ private:
 
 	stack<glm::mat4> mvStack;
 	GLuint skyboxProgram;
-	GLuint skyboxTex[4];
+	GLuint skyboxTex;
 
 	GLfloat cubeVertCount = 8;
 	GLfloat cubeVerts[24] = { -0.5, -0.5f, -0.5f,
@@ -58,7 +58,7 @@ public:
 
 	}
 
-	void init(GLuint skyboxT[4]);
+	void init(GLuint skyboxT);
 	void update();
 	void draw(glm::mat4 mvp, glm::mat4 projection, GLuint mvpProgram);
 };

@@ -1,13 +1,9 @@
 #include "Skybox.h"
 
-void Skybox::init(GLuint skyboxT[4])
+void Skybox::init(GLuint skyboxT)
 {
 	skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
-	skyboxTex[0] = skyboxT[0];
-	skyboxTex[1] = skyboxT[1];
-	skyboxTex[2] = skyboxT[2];
-	skyboxTex[3] = skyboxT[3];
-	skyboxTex[4] = skyboxT[4];
+	skyboxTex = skyboxT;
 
 	GLuint meshObjects = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
 }
@@ -29,52 +25,25 @@ void Skybox::draw(glm::mat4 mvp,glm::mat4 projection, GLuint mvpProgram)
 
 	GLfloat indexProgram = 6;
 
-	// front
+	glCullFace(GL_FRONT);
+	glBindTexture(GL_TEXTURE_2D, skyboxTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	mvStack.push(mvStack.top());
-	glBindTexture(GL_TEXTURE_2D, skyboxTex[0]);
-	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 0.0f, -2.0f));
+	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(4.0f, 4.0f, 4.0f)); // you may need to scale it beyond the near clipping plane
+	glm::mat4 view = mvStack.top();
+	mvStack.top() = glm::mat4(glm::mat3(view)); // remove translation from the view matrix
 	rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	rt3d::drawIndexedMesh(meshObjects, indexProgram, GL_TRIANGLES);
+		//rt3d::setMaterial(shaderProgram, materialsky);
+	glm::vec4 vec4_skyboxlight(1.0);
+		//rt3d::setLightPos(shaderProgram, glm::value_ptr(vec4_skyboxlight));
+	rt3d::drawIndexedMesh(meshObjects, 36, GL_TRIANGLES);
+	mvStack.pop();
+	glCullFace(GL_BACK);
 	mvStack.pop();
 
-	//// back
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skyboxTex[1]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 0.0f, 2.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects, indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// left
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skyboxTex[2]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(-2.0f, 0.0f, 0.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects, indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// right
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skyboxTex[3]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(2.0f, 0.0f, 0.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects, indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// top
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skyboxTex[4]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 2.0f, 0.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects, indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	mvStack.pop();
 	glDepthMask(GL_TRUE);
 	glUseProgram(mvpProgram);
 }

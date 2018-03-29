@@ -142,6 +142,7 @@
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Car.cpp" />
+    <ClCompile Include="Coin.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md2model.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -165,6 +166,7 @@
   <ItemGroup>
     <ClInclude Include="AABB.h" />
     <ClInclude Include="Car.h" />
+    <ClInclude Include="Coin.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="anorms.h" />
     <ClInclude Include="Camera.h" />

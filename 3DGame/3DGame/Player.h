@@ -1,11 +1,10 @@
 #pragma once
 #include "Entity.h"
-#include "md2model.h"
 
 
 using namespace glm;
 
-class Player
+class Player : Entity
 {
 private:
 	vec3 position;
@@ -25,21 +24,21 @@ private:
 	GLuint md2VertCount = 0;
 	md2model model;
 	int currentAnim = 0;
-	const char *filename;
+	string filename;
+
 	AABB* collisionBox = new AABB(position, 0.5, 0.5, 0.5);
 
 
 public:
-	Player(const char *filename, vec3 position, rt3d::materialStruct material) : filename(filename), position(position), material(material) {
+	Player(string filename, vec3 position, rt3d::materialStruct material) : filename(filename), position(position), material(material) {
 	}
 
 	virtual ~Player() {
 		delete collisionBox;
-		delete filename;
 	}
 
 	vec3 getPosition();
-	vec3 setPosition(vec3 pos);
+	void setPosition(vec3 pos);
 
 	AABB* getCollision();
 

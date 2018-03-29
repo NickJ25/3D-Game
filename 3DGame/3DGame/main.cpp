@@ -16,6 +16,7 @@
 #include "Camera.h"
 #include "Skybox.h"
 #include "Player.h"
+#include "Coin.h"
 #include "AABB.h" // temp
 
 #define DEG_TO_RADIAN 0.017453293
@@ -126,6 +127,8 @@ glm::vec3 at(playerPos);
 glm::vec3 up(0.0f, 1.0f, 0.0f);
 GLfloat cameraDistance = 5.0f;
 
+Coin coinTest("coin.md2", glm::vec3(0, 0, 0), material0);
+
 //MD2 Stuff
 GLuint md2VertCount = 0, md2VertCount2 = 0;
 md2model tmpModel, tmpModel2;
@@ -230,8 +233,10 @@ void init(void) {
 	skybox[2] = loadBitmap("violentdays_ft.bmp");
     skybox[3] = loadBitmap("violentdays_lf.bmp");
 	skybox[4] = loadBitmap("violentdays_up.bmp");
+
+	coinTest.init(textures[2]);
+	skyBox.init(skybox[0]);
 	
-	skyBox.init(skybox);
 
  
 	// Going to create our mesh objects here
@@ -312,10 +317,11 @@ void update(void) {
 	// Collision Testing
 	player.update();
 	testAABB.setPosition(playerPos);
-	cout << "Object Pos: " << player.getPosition().x << " " << player.getPosition().z << " | Player Pos: " << playerPos.x << " " << playerPos.y << endl;
 	if (TestAABBAABB(player.getCollision(), testAABB) == true) {
 		cout << "COLLISION BOI" << endl;
 	}
+
+	coinTest.update();
 
 }
 
@@ -356,69 +362,7 @@ void draw(SDL_Window * window) {
 
 #pragma endregion
 
-#pragma region SkyBox
-
 	skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
-
-	//glUseProgram(skyboxProgram);
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "projection", glm::value_ptr(projection));
-
-	//glDepthMask(GL_FALSE); // make sure depth test is off
-	//glm::mat3 mvRotOnlyMat3 = glm::mat3(mvStack.top());
-	//mvStack.push(glm::mat4(mvRotOnlyMat3));
-
-	//GLfloat indexProgram = 6;
-
-	//// front
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skybox[0]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 0.0f, -2.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// back
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skybox[1]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 0.0f, 2.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// left
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skybox[2]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(-2.0f, 0.0f, 0.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// right
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skybox[3]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(2.0f, 0.0f, 0.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//// top
-	//mvStack.push(mvStack.top());
-	//glBindTexture(GL_TEXTURE_2D, skybox[4]);
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(2.0f, 2.0f, 2.0f));
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0.0f, 2.0f, 0.0f));
-	//rt3d::setUniformMatrix4fv(skyboxProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], indexProgram, GL_TRIANGLES);
-	//mvStack.pop();
-
-	//mvStack.pop();
-	//glDepthMask(GL_TRUE);
-	//glUseProgram(mvpShaderProgram);
-
-#pragma endregion
 
 
 
@@ -490,6 +434,8 @@ void draw(SDL_Window * window) {
 	mvStack.pop();
 	glCullFace(GL_BACK);
 #pragma endregion
+
+	coinTest.draw(mvStack.top(), mvpShaderProgram);
 
 	//Objects
 	mvStack.push(mvStack.top());

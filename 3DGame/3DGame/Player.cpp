@@ -5,9 +5,9 @@ vec3 Player::getPosition()
 	return position;
 }
 
-vec3 Player::setPosition(vec3 pos)
+void Player::setPosition(vec3 pos)
 {
-	return vec3();
+	position = pos;
 }
 
 AABB* Player::getCollision()
@@ -17,7 +17,7 @@ AABB* Player::getCollision()
 
 void Player::init(GLuint texture)
 {
-	meshObject = model.ReadMD2Model(filename);
+	meshObject = model.ReadMD2Model(filename.c_str()); // Cast String to Char
 	md2VertCount = model.getVertDataCount();
 	modelTexture = texture;
 }
@@ -38,7 +38,6 @@ void Player::draw(mat4 matrix, GLuint shaderProgram)
 	rt3d::setMaterial(shaderProgram, tmpMaterial);
 
 	matrix = glm::translate(matrix, glm::vec3(position));
-	//
 	matrix = glm::rotate(matrix, float(90 * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
 	matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
 	matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
