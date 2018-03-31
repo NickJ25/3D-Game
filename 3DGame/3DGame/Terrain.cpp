@@ -14,8 +14,8 @@ void Terrain::draw(mat4 matrix, GLuint shaderProgram)
 {
 	glBindTexture(GL_TEXTURE_2D, modelTexture);
 	matrix = glm::translate(matrix, glm::vec3(0.0f, -0.1f, 0.0f));
-	matrix = glm::scale(matrix, glm::vec3(1.0f, 1.0f, 1.0f));
+	matrix = glm::scale(matrix, glm::vec3(7.0f, 1.0f,3.0f));
 	rt3d::setUniformMatrix4fv(shaderProgram, "modelview", glm::value_ptr(matrix));
 	rt3d::setMaterial(shaderProgram, material);
-	rt3d::drawIndexedMesh(meshObject, objIndexCount, GL_TRIANGLES); //GL_TRIANGLES
+	rt3d::drawIndexedMesh(meshObject, objIndexCount, GL_TRIANGLES);
 }

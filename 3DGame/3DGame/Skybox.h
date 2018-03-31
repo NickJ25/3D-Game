@@ -3,6 +3,7 @@
 #include <stack>
 
 using namespace std;
+using namespace glm;
 
 class Skybox {
 private:
@@ -47,8 +48,15 @@ private:
 							0,3,4, 3,7,4, // bottom
 							6,5,4, 7,6,4 }; // front
 
+	rt3d::materialStruct material = {
+		{ 0.4f, 0.2f, 0.2f, 1.0f }, // ambient
+	{ 0.8f, 0.5f, 0.5f, 1.0f }, // diffuse
+	{ 1.0f, 0.8f, 0.8f, 1.0f }, // specular
+	2.0f // shininess
+	};
 
-	GLuint meshObjects;// = 5; //= rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
+
+	GLuint meshObjects;
 
 
 public:

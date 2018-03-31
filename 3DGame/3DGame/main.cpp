@@ -133,7 +133,7 @@ glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
 
 // Terrain Settings / test
-Terrain terrain("cube.obj", vec3(0,0,0), material0); //RoadTerrain
+Terrain terrain("Road.obj", vec3(0,0,0), material0); //RoadTerrain.obj
 
 AABB testAABB(playerPos, 0.5, 0.5, 0.5);
 
@@ -396,7 +396,6 @@ void draw(SDL_Window * window) {
 #pragma endregion
 
 	skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
-
 
 
 	//Light Object
