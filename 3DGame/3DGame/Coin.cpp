@@ -17,9 +17,11 @@ AABB * Coin::getCollision()
 
 void Coin::init(GLuint texture)
 {
-	meshObject = model.ReadMD2Model(filename.c_str()); // Cast String to Char
+	meshObject = model.ReadMD2Model(filename.c_str());//*filename.c_str()); // Cast String to Char
 	md2VertCount = model.getVertDataCount();
 	modelTexture = texture;
+
+	collisionBox = new AABB(position, 0.6, 0.6, 0.6);
 }
 
 void Coin::update()
@@ -38,7 +40,7 @@ void Coin::draw(mat4 matrix, GLuint shaderProgram)
 
 	matrix = glm::translate(matrix, glm::vec3(position));
 	matrix = glm::rotate(matrix, float(rotation * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
-	//matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
+	matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
 	//matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
 	matrix = glm::scale(matrix, glm::vec3(1 * 0.0005, 1 * 0.0005, 1 * 0.0005));
 	rt3d::setUniformMatrix4fv(shaderProgram, "modelview", glm::value_ptr(matrix));

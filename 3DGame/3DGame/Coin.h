@@ -1,13 +1,19 @@
 #pragma once
 #include "Entity.h"
 
-class Coin : Entity{
+class Coin : public Entity{
 private:
 	vec3 position;
 	GLfloat spinSpeed = 5;
-	GLfloat rotation;
+	GLfloat rotation = 0;
 	AABB* collisionBox;
-	string filename;
+	std::string filename;
+
+	// Mesh data
+	GLuint meshObject;
+	GLuint modelTexture;
+	GLuint md2VertCount = 0;
+	md2model model;
 
 	rt3d::materialStruct material = {
 		{ 0.4f, 0.2f, 0.2f, 1.0f }, // ambient
@@ -16,13 +22,8 @@ private:
 	2.0f // shininess
 	};
 
-	GLuint meshObject;
-	GLuint modelTexture;
-	GLuint md2VertCount = 0;
-	md2model model;
-	int currentAnim = 0;
 public:
-	Coin(string filename, vec3 position, rt3d::materialStruct material) : filename(filename), position(position), material(material) {
+	Coin(string& fileName, vec3& position, rt3d::materialStruct& material) : filename(fileName), position(position), material(material) {
 	}
 
 	virtual ~Coin() {

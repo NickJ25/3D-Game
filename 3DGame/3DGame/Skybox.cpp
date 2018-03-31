@@ -6,6 +6,7 @@ void Skybox::init(GLuint skyboxT)
 	skyboxTex = skyboxT;
 
 	GLuint meshObjects = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
+	cout << "Skybox: " << meshObjects << endl;
 }
 
 void Skybox::update()

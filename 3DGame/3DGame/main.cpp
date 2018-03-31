@@ -11,13 +11,16 @@
 
 
 #include <stack>
+#include <vector>
 #include "rt3d.h"
 #include "md2model.h"
 #include "Camera.h"
 #include "Skybox.h"
 #include "Player.h"
 #include "Coin.h"
+#include "Terrain.h"
 #include "AABB.h" // temp
+#include "Entity.h"
 
 #define DEG_TO_RADIAN 0.017453293
 
@@ -64,6 +67,7 @@ GLuint cubeIndices[] = { 0,1,2, 0,2,3, // back
 						6,5,4, 7,6,4 }; // front
 #pragma endregion
 
+
 rt3d::lightStruct light0 = {
 	{ 0.3f, 0.3f, 0.3f, 1.0f }, // ambient
 	{ 0.7f, 0.7f, 0.7f, 1.0f }, // diffuse
@@ -71,6 +75,7 @@ rt3d::lightStruct light0 = {
 	{ 0.0f, 0.0f, 1.0f, 1.0f }  // position
 };
 
+#pragma region Materials
 rt3d::materialStruct material0 = {
 	{0.4f, 0.2f, 0.2f, 1.0f}, // ambient
 	{0.8f, 0.5f, 0.5f, 1.0f}, // diffuse
@@ -85,6 +90,14 @@ rt3d::materialStruct material1 = {
 	2.0f // shininess
 };
 
+rt3d::materialStruct material2 = { // Metal Material
+	{ 0.9f, 0.9f, 0.9f, 1.0f }, // ambient
+	{ 0.5f, 0.5f, 0.5f, 1.0f }, // diffuse
+	{ 1.0f, 1.0f, 1.0f, 1.0f }, // specular
+4.0f // shininess
+};
+#pragma endregion
+
 // Screen Size
 GLfloat screenWidth = 1280, screenHeight = 720;
 
@@ -93,6 +106,7 @@ GLfloat fov = float(60.0f*DEG_TO_RADIAN), aspect = ((float)screenWidth / (float)
 
 // Stack for storing modelview matrix when dealing with multiple matrixes
 stack<glm::mat4> mvStack;
+vector<Entity*> gameEntities;
 
 GLuint meshObjects[6]; // Array with X amount of Unique Objects
 GLuint textures[5]; // Array with X amount of Unique Textures
@@ -118,6 +132,9 @@ Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
 
+// Terrain Settings / test
+Terrain terrain("cube.obj", vec3(0,0,0), material0); //RoadTerrain
+
 AABB testAABB(playerPos, 0.5, 0.5, 0.5);
 
 // Camera Settings
@@ -127,7 +144,10 @@ glm::vec3 at(playerPos);
 glm::vec3 up(0.0f, 1.0f, 0.0f);
 GLfloat cameraDistance = 5.0f;
 
-Coin coinTest("coin.md2", glm::vec3(0, 0, 0), material0);
+string stringtest = "coin.md2";
+
+Coin* coinTest = new Coin(stringtest, glm::vec3(playerPos.x+5, 0, 0), material2);
+
 
 //MD2 Stuff
 GLuint md2VertCount = 0, md2VertCount2 = 0;
@@ -215,16 +235,20 @@ void init(void) {
 	rt3d::setLight(mvpShaderProgram, light0);
 	rt3d::setMaterial(mvpShaderProgram, material0);
 
+	gameEntities.push_back(coinTest);
+
 	textures[0] = loadBitmap("cobble.bmp");
 	textures[1] = loadBitmap("studdedmetal.bmp");
 	textures[2] = loadBitmap("fabric.bmp");
 	textures[3] = loadBitmap("hobgoblin2.bmp");
 	textures[4] = loadBitmap("car.bmp");
+	textures[5] = loadBitmap("coin.bmp");
 
 	meshObjects[3] = tmpModel.ReadMD2Model("tris.MD2");
 	meshObjects[4] = tmpModel2.ReadMD2Model("policecar.md2");
 	md2VertCount = tmpModel.getVertDataCount();
 	md2VertCount2 = tmpModel2.getVertDataCount();
+
 
 	player.init(textures[3]);
 
@@ -234,7 +258,10 @@ void init(void) {
     skybox[3] = loadBitmap("violentdays_lf.bmp");
 	skybox[4] = loadBitmap("violentdays_up.bmp");
 
-	coinTest.init(textures[2]);
+	
+	
+	coinTest->init(textures[5]);
+	terrain.init(textures[0]); // without terrain, skybox messes up?
 	skyBox.init(skybox[0]);
 	
 
@@ -309,6 +336,11 @@ void update(void) {
 		if (keys[SDL_SCANCODE_UP]) lscalar += 0.1f;
 		if (keys[SDL_SCANCODE_DOWN]) lscalar -= 0.1f;
 	} 
+
+	for (vector<Entity*>::iterator it = gameEntities.begin(); it < gameEntities.end(); it++)
+	{
+		(*it)->update();
+	}
 	//eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
 	//at = playerPos;
 	tempVel;// -= 0.1;
@@ -317,11 +349,12 @@ void update(void) {
 	// Collision Testing
 	player.update();
 	testAABB.setPosition(playerPos);
-	if (TestAABBAABB(player.getCollision(), testAABB) == true) {
+	if (TestAABBAABB(coinTest->getCollision(), testAABB) == true) {
 		cout << "COLLISION BOI" << endl;
+		delete coinTest;
 	}
 
-	coinTest.update();
+	//coinTest.update();
 
 }
 
@@ -417,6 +450,9 @@ void draw(SDL_Window * window) {
 	mvStack.pop();
 	glCullFace(GL_BACK);
 
+	// draw terrain
+	terrain.draw(mvStack.top(), mvpShaderProgram);
+
 	// draw car
 	glCullFace(GL_FRONT);
 	glBindTexture(GL_TEXTURE_2D, textures[4]);
@@ -435,7 +471,12 @@ void draw(SDL_Window * window) {
 	glCullFace(GL_BACK);
 #pragma endregion
 
-	coinTest.draw(mvStack.top(), mvpShaderProgram);
+	for (vector<Entity*>::iterator it = gameEntities.begin(); it < gameEntities.end(); it++)
+	{
+		(*it)->draw(mvStack.top(), mvpShaderProgram);
+	}
+
+	//coinTest.draw(mvStack.top(), mvpShaderProgram);
 
 	//Objects
 	mvStack.push(mvStack.top());

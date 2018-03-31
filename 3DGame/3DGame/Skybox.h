@@ -48,7 +48,7 @@ private:
 							6,5,4, 7,6,4 }; // front
 
 
-	GLuint meshObjects = 5; //= rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
+	GLuint meshObjects;// = 5; //= rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
 
 
 public:
