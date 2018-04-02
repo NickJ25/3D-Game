@@ -1,5 +1,12 @@
 #include "Player.h"
 
+void Player::moveVert(GLfloat d)
+{
+	setPosition( glm::vec3(position.x + d * std::sin(rotation*DEG_TO_RADIAN), 
+			position.y, position.z - d * std::cos(rotation*DEG_TO_RADIAN)));
+
+}
+
 vec3 Player::getPosition()
 {
 	return position;
@@ -15,6 +22,16 @@ AABB* Player::getCollision()
 	return collisionBox;
 }
 
+void Player::setCurrentAnim(GLuint animNum)
+{
+	currentAnim = animNum;
+}
+
+void Player::setRotation(GLfloat updateRotation)
+{
+	rotation = updateRotation;
+}
+
 void Player::init(GLuint texture)
 {
 	meshObject = model.ReadMD2Model(filename.c_str()); // Cast String to Char
@@ -25,6 +42,7 @@ void Player::init(GLuint texture)
 void Player::update()
 {
 	collisionBox->setPosition(position);
+	
 }
 
 void Player::draw(mat4 matrix, GLuint shaderProgram)
@@ -38,7 +56,7 @@ void Player::draw(mat4 matrix, GLuint shaderProgram)
 	rt3d::setMaterial(shaderProgram, tmpMaterial);
 
 	matrix = glm::translate(matrix, glm::vec3(position));
-	matrix = glm::rotate(matrix, float(90 * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
+	matrix = glm::rotate(matrix, float(-rotation * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
 	matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
 	matrix = glm::rotate(matrix, float(90.0*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
 	matrix = glm::scale(matrix, glm::vec3(1 * 0.05, 1 * 0.05, 1 * 0.05));

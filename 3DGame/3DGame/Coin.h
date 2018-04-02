@@ -23,7 +23,7 @@ private:
 	};
 
 public:
-	Coin(string& fileName, vec3& position, rt3d::materialStruct& material) : filename(fileName), position(position), material(material) {
+	Coin(string filename, vec3& position, rt3d::materialStruct& material) : filename(filename), position(position), material(material) {
 	}
 
 	virtual ~Coin() {

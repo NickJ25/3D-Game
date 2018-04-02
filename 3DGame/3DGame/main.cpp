@@ -21,6 +21,8 @@
 #include "Terrain.h"
 #include "AABB.h" // temp
 #include "Entity.h"
+#include "Car.h"
+
 
 #define DEG_TO_RADIAN 0.017453293
 
@@ -74,6 +76,15 @@ rt3d::lightStruct light0 = {
 	{ 0.8f, 0.8f, 0.8f, 1.0f }, // specular
 	{ 0.0f, 0.0f, 1.0f, 1.0f }  // position
 };
+
+rt3d::lightStruct light1 = {
+	{ 0.3f, 0.3f, 0.3f, 1.0f }, // ambient
+{ 0.7f, 0.7f, 0.7f, 1.0f }, // diffuse
+{ 0.8f, 0.8f, 0.8f, 1.0f }, // specular
+{ 10.0f, 0.0f, 1.5f, 1.0f }  // position
+};
+
+
 
 #pragma region Materials
 rt3d::materialStruct material0 = {
@@ -132,21 +143,26 @@ Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
 glm::vec3 carPos(0.0f, -1.0f, -10.0f);
 GLfloat tempVel = 0;//30;
 
+
+
 // Terrain Settings / test
 Terrain terrain("Road.obj", vec3(0,0,0), material0); //RoadTerrain.obj
 
 AABB testAABB(playerPos, 0.5, 0.5, 0.5);
 
 // Camera Settings
-//Camera camera(playerPos, vec3(0.0f,1.0f,4.0f), vec3(0.0f, 1.0f, 0.0f));
+
+Camera camera(player.getPosition(), vec3(0.0f,1.0f,0.0f), 270.0f);
+
 glm::vec3 eye(0.0f, 1.0f, 4.0f);
 glm::vec3 at(playerPos);
 glm::vec3 up(0.0f, 1.0f, 0.0f);
 GLfloat cameraDistance = 5.0f;
 
-string stringtest = "coin.md2";
+//string stringtest = "coin.md2";
 
-Coin* coinTest = new Coin(stringtest, glm::vec3(playerPos.x+5, 0, 0), material2);
+Coin* coinTest = new Coin("coin.md2", glm::vec3(playerPos.x+5, 0, 0), material2); // delete these
+Car* carTest = new Car("policecar.md2", vec3(0,-1,0), vec3(-0.1,0,0), material0);
 
 
 //MD2 Stuff
@@ -232,10 +248,12 @@ void init(void) {
 	// For this simple example we'll be using the most basic of shader programs
 	skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
 	mvpShaderProgram = rt3d::initShaders("phong-tex.vert", "phong-tex.frag");
-	rt3d::setLight(mvpShaderProgram, light0);
+	//rt3d::setLight(mvpShaderProgram, light0);
+	//rt3d::setLight(mvpShaderProgram, light1);
 	rt3d::setMaterial(mvpShaderProgram, material0);
 
 	gameEntities.push_back(coinTest);
+	gameEntities.push_back(carTest);
 
 	textures[0] = loadBitmap("cobble.bmp");
 	textures[1] = loadBitmap("studdedmetal.bmp");
@@ -261,6 +279,7 @@ void init(void) {
 	
 	
 	coinTest->init(textures[5]);
+	carTest->init(textures[4]);
 	terrain.init(textures[0]); // without terrain, skybox messes up?
 	skyBox.init(skybox[0]);
 	
@@ -276,15 +295,15 @@ void init(void) {
 
 }
 
-glm::vec3 moveVert(glm::vec3 cam, GLfloat angle, GLfloat d) {
-	return glm::vec3(cam.x + d * std::sin(angle*DEG_TO_RADIAN), 
-		cam.y, cam.z - d * std::cos(angle*DEG_TO_RADIAN));
-}
-
-glm::vec3 moveHori(glm::vec3 pos, GLfloat angle, GLfloat d) {
-	return glm::vec3(pos.x + d * std::cos(angle*DEG_TO_RADIAN), 
-		pos.y, pos.z + d * std::sin(angle*DEG_TO_RADIAN));
-}
+//glm::vec3 moveVert(glm::vec3 cam, GLfloat angle, GLfloat d) {
+//	return glm::vec3(cam.x + d * std::sin(angle*DEG_TO_RADIAN), 
+//		cam.y, cam.z - d * std::cos(angle*DEG_TO_RADIAN));
+//}
+//
+//glm::vec3 moveHori(glm::vec3 pos, GLfloat angle, GLfloat d) {
+//	return glm::vec3(pos.x + d * std::cos(angle*DEG_TO_RADIAN), 
+//		pos.y, pos.z + d * std::sin(angle*DEG_TO_RADIAN));
+//}
 
 bool TestAABBAABB(AABB* a, AABB b) // Checks all axis to see if there was an intersection (Base code taken from Real Time Collision Detection by 
 {
@@ -297,25 +316,36 @@ bool TestAABBAABB(AABB* a, AABB b) // Checks all axis to see if there was an int
 void update(void) {
 
 	// Keyboard inputs
-	currentAnim = 0; // set player animation to idle
+
+	//currentAnim = 0; // set player animation to idle
+	player.setCurrentAnim(0);
+	player.setRotation(camera.getRotation());
+
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
 	if (!lightMode) {
 		if (keys[SDL_SCANCODE_W]) {
-			playerPos = moveVert(playerPos, r, 0.1f);
-			currentAnim = 1; // change player animation to walking
+			//playerPos = moveVert(playerPos, r, 0.1f);
+			player.moveVert(0.1f);
+			//currentAnim = 1; // change player animation to walking
+			player.setCurrentAnim(1);
 		}
 		if (keys[SDL_SCANCODE_S]) {
-			playerPos = moveVert(playerPos, r, -0.1f);
-			currentAnim = 1; // change player animation to walking
+			//playerPos = moveVert(playerPos, r, -0.1f);
+			player.moveVert(-0.1f);
+			//currentAnim = 1; // change player animation to walking
+			player.setCurrentAnim(1);
 		}
 		if (keys[SDL_SCANCODE_D]) {
-			r += 2.0f; // increase rotation
+			//r += 2.0f; // increase rotation
+			camera.setRotation(camera.getRotation() + 2.0f);
 		}
 		if (keys[SDL_SCANCODE_A]) {
-			r -= 2.0f; // decrease rotation
+			//r -= 2.0f; // decrease rotation
+			camera.setRotation(camera.getRotation() - 2.0f);
 			
 		}
+		player.update();
 		//if (keys[SDL_SCANCODE_R]) eye.y += 0.1;
 		//if (keys[SDL_SCANCODE_F]) eye.y -= 0.1f;
 		if (keys[SDL_SCANCODE_COMMA]) r -= 1.0f;
@@ -347,7 +377,7 @@ void update(void) {
 	carPos = glm::vec3(tempVel, carPos.y, carPos.z);
 
 	// Collision Testing
-	player.update();
+
 	testAABB.setPosition(playerPos);
 	if (TestAABBAABB(coinTest->getCollision(), testAABB) == true) {
 		cout << "COLLISION BOI" << endl;
@@ -380,18 +410,19 @@ void draw(SDL_Window * window) {
 #pragma region Camera
 
 	mvStack.push(modelview);
+	mvStack.top() = camera.draw(player.getPosition());
 
-	// rotation amount (r = rotation amount), - 270 so player starts facing forward.
-	GLfloat r_cam = r - 270;
+	//// rotation amount (r = rotation amount), - 270 so player starts facing forward.
+	//GLfloat r_cam = r - 270;
 
-	// calculate unit vector [x, y] on unit circle using cos, sin of angle
-	vec3 offset(cameraDistance*cos(r_cam*DEG_TO_RADIAN), cameraDistance *0.5, cameraDistance* sin(r_cam*DEG_TO_RADIAN));
+	//// calculate unit vector [x, y] on unit circle using cos, sin of angle
+	//vec3 offset(cameraDistance*cos(r_cam*DEG_TO_RADIAN), cameraDistance *0.5, cameraDistance* sin(r_cam*DEG_TO_RADIAN));
 
-	at = playerPos; // Look at the player's position
+	//at = playerPos; // Look at the player's position
 
-	// eye (Camera's position) + the rotation
-	eye = playerPos + offset;
-	mvStack.top() = glm::lookAt(eye, at, up);
+	//// eye (Camera's position) + the rotation
+	//eye = playerPos + offset;
+	//mvStack.top() = glm::lookAt(eye, at, up);
 
 #pragma endregion
 
@@ -401,6 +432,7 @@ void draw(SDL_Window * window) {
 	//Light Object
 	mvStack.push(mvStack.top());
 	rt3d::setLight(mvpShaderProgram, light0);
+	
 	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(dxl, dyl, 0));
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(lscalar, lscalar, lscalar));
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
@@ -411,6 +443,8 @@ void draw(SDL_Window * window) {
 
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
+
+	rt3d::setLight(mvpShaderProgram, light1);
 
 	player.draw(mvStack.top(), mvpShaderProgram);
 
@@ -486,14 +520,14 @@ void draw(SDL_Window * window) {
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
 
-	mvStack.push(mvStack.top());
-	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0, -1, -10.0f));
-	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(20.0f, 0.1f, 20.0f));
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
-	rt3d::setMaterial(mvpShaderProgram, material0);
-	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
-	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
-	mvStack.pop();
+	//mvStack.push(mvStack.top()); // Old Terrain
+	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0, -1, -10.0f));
+	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(20.0f, 0.1f, 20.0f));
+	//glBindTexture(GL_TEXTURE_2D, textures[0]);
+	//rt3d::setMaterial(mvpShaderProgram, material0);
+	//rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
+	//rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
+	//mvStack.pop();
 
 	glDepthMask(GL_FALSE);
 	mvStack.push(mvStack.top());

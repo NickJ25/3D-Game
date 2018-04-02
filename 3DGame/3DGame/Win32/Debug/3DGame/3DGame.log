@@ -1,2 +1,12 @@
-﻿  Terrain.cpp
+﻿  Player.cpp
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): warning C4005: 'WIN32': macro redefinition
+  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): note: command-line arguments:  see previous definition of 'WIN32'
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\player.cpp(50): warning C4305: 'argument': truncation from 'double' to 'float'
+  main.cpp
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): warning C4005: 'WIN32': macro redefinition
+  d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\md2model.h(41): note: command-line arguments:  see previous definition of 'WIN32'
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(195): warning C4244: 'argument': conversion from 'GLfloat' to 'int', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(289): warning C4244: 'argument': conversion from 'GLfloat' to 'const GLuint', possible loss of data
+d:\users\cookie\desktop\3dgamesrepo\3dgame\3dgame\main.cpp(465): warning C4305: 'argument': truncation from 'double' to 'float'
+  Generating Code...
   3DGame.vcxproj -> D:\Users\Cookie\Desktop\3DGamesRepo\3DGame\Debug\3DGame.exe

@@ -143,6 +143,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Car.cpp" />
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="Light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="md2model.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="anorms.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Light.h" />
     <ClInclude Include="md2model.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="rt3d.h" />

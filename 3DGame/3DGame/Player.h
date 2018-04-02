@@ -4,7 +4,7 @@
 
 using namespace glm;
 
-class Player : Entity
+class Player : public Entity
 {
 private:
 	vec3 position;
@@ -25,6 +25,7 @@ private:
 	md2model model;
 	int currentAnim = 0;
 	string filename;
+	GLfloat rotation;
 
 	AABB* collisionBox = new AABB(position, 0.5, 0.5, 0.5);
 
@@ -41,6 +42,12 @@ public:
 	void setPosition(vec3 pos);
 
 	AABB* getCollision();
+
+	void setCurrentAnim(GLuint animNum);
+
+	void setRotation(GLfloat updateRotation);
+
+	void moveVert(GLfloat d);
 
 	void init(GLuint texture);
 	void update();

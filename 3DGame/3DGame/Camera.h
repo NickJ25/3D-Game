@@ -15,13 +15,19 @@ private:
 	vec3 eye;
 	vec3 at;
 	vec3 up;
+	GLfloat rotation = 0;
+	GLfloat cameraDistance = 5; // Default distance from player
 public:
-	Camera(vec3 targetPos, vec3 eye, vec3 up) : at(targetPos), eye(eye), up(up) {
+	Camera(vec3 targetPos, vec3 up, GLfloat startRotation) : at(targetPos), eye(eye), up(up), rotation(startRotation){
 		//at = targetPos;
 	}
 	virtual ~Camera() {}
 
+	GLfloat getRotation();
+	void setRotation(GLfloat rotation);
+
+	void init();
 	void update();
-	mat4 transform(mat4 mat);
+	mat4 draw(vec3 at);
 	
 };
