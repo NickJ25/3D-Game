@@ -123,8 +123,6 @@ GLuint meshObjects[6]; // Array with X amount of Unique Objects
 GLuint textures[5]; // Array with X amount of Unique Textures
 GLuint skybox[5]; // Array with X amount of Unique Skyboxes
 
-
-
 Skybox skyBox;
 
 GLuint mvpShaderProgram;
@@ -138,28 +136,17 @@ GLfloat dx = 0.0f, dy = 0.0f, dz = 0.0f, r = 0.0f, scalar = 1.0f;
 GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 
 // Player Settings
-glm::vec3 playerPos(0.0f, 0.5f, 1.0f);
+glm::vec3 playerPos(0.0f, 0.5f, 1.0f); // TEST COORDS
+
 Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
-glm::vec3 carPos(0.0f, -1.0f, -10.0f);
-GLfloat tempVel = 0;//30;
-
-
 
 // Terrain Settings / test
-Terrain terrain("Road.obj", vec3(0,0,0), material0); //RoadTerrain.obj
+Terrain terrain("Road.obj", vec3(0,0,0), material0);
 
 AABB testAABB(playerPos, 0.5, 0.5, 0.5);
 
 // Camera Settings
-
 Camera camera(player.getPosition(), vec3(0.0f,1.0f,0.0f), 270.0f);
-
-glm::vec3 eye(0.0f, 1.0f, 4.0f);
-glm::vec3 at(playerPos);
-glm::vec3 up(0.0f, 1.0f, 0.0f);
-GLfloat cameraDistance = 5.0f;
-
-//string stringtest = "coin.md2";
 
 Coin* coinTest = new Coin("coin.md2", glm::vec3(playerPos.x+5, 0, 0), material2); // delete these
 Car* carTest = new Car("policecar.md2", vec3(0,-1,0), vec3(-0.1,0,0), material0);
@@ -245,8 +232,7 @@ GLuint loadBitmap(char *fname)
 }
 
 void init(void) {
-	// For this simple example we'll be using the most basic of shader programs
-	skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
+	//skyboxProgram = rt3d::initShaders("textured.vert", "textured.frag");
 	mvpShaderProgram = rt3d::initShaders("phong-tex.vert", "phong-tex.frag");
 	//rt3d::setLight(mvpShaderProgram, light0);
 	//rt3d::setLight(mvpShaderProgram, light1);
@@ -267,7 +253,6 @@ void init(void) {
 	md2VertCount = tmpModel.getVertDataCount();
 	md2VertCount2 = tmpModel2.getVertDataCount();
 
-
 	player.init(textures[3]);
 
 	skybox[0] = loadBitmap("violentdays_bk.bmp");
@@ -276,15 +261,11 @@ void init(void) {
     skybox[3] = loadBitmap("violentdays_lf.bmp");
 	skybox[4] = loadBitmap("violentdays_up.bmp");
 
-	
-	
 	coinTest->init(textures[5]);
 	carTest->init(textures[4]);
 	terrain.init(textures[0]); // without terrain, skybox messes up?
 	skyBox.init(skybox[0]);
 	
-
- 
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
 
@@ -292,18 +273,7 @@ void init(void) {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
 }
-
-//glm::vec3 moveVert(glm::vec3 cam, GLfloat angle, GLfloat d) {
-//	return glm::vec3(cam.x + d * std::sin(angle*DEG_TO_RADIAN), 
-//		cam.y, cam.z - d * std::cos(angle*DEG_TO_RADIAN));
-//}
-//
-//glm::vec3 moveHori(glm::vec3 pos, GLfloat angle, GLfloat d) {
-//	return glm::vec3(pos.x + d * std::cos(angle*DEG_TO_RADIAN), 
-//		pos.y, pos.z + d * std::sin(angle*DEG_TO_RADIAN));
-//}
 
 bool TestAABBAABB(AABB* a, AABB b) // Checks all axis to see if there was an intersection (Base code taken from Real Time Collision Detection by 
 {
@@ -316,44 +286,28 @@ bool TestAABBAABB(AABB* a, AABB b) // Checks all axis to see if there was an int
 void update(void) {
 
 	// Keyboard inputs
-
-	//currentAnim = 0; // set player animation to idle
-	player.setCurrentAnim(0);
+	player.setCurrentAnim(0); // set player animation to idle
 	player.setRotation(camera.getRotation());
 
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
 	if (!lightMode) {
 		if (keys[SDL_SCANCODE_W]) {
-			//playerPos = moveVert(playerPos, r, 0.1f);
-			player.moveVert(0.1f);
-			//currentAnim = 1; // change player animation to walking
-			player.setCurrentAnim(1);
+			player.moveVert(0.1f); // Rotates the player
+			player.setCurrentAnim(1); // change player animation to walking
 		}
 		if (keys[SDL_SCANCODE_S]) {
-			//playerPos = moveVert(playerPos, r, -0.1f);
-			player.moveVert(-0.1f);
-			//currentAnim = 1; // change player animation to walking
-			player.setCurrentAnim(1);
+			player.moveVert(-0.1f); // Rotates the player
+			player.setCurrentAnim(1); // change player animation to walking
 		}
 		if (keys[SDL_SCANCODE_D]) {
-			//r += 2.0f; // increase rotation
-			camera.setRotation(camera.getRotation() + 2.0f);
+			camera.setRotation(camera.getRotation() + 2.0f); // increase rotation for camera
 		}
 		if (keys[SDL_SCANCODE_A]) {
-			//r -= 2.0f; // decrease rotation
-			camera.setRotation(camera.getRotation() - 2.0f);
-			
+			camera.setRotation(camera.getRotation() - 2.0f); // decreases rotation for camera
+
 		}
 		player.update();
-		//if (keys[SDL_SCANCODE_R]) eye.y += 0.1;
-		//if (keys[SDL_SCANCODE_F]) eye.y -= 0.1f;
-		if (keys[SDL_SCANCODE_COMMA]) r -= 1.0f;
-		if (keys[SDL_SCANCODE_PERIOD]) r += 1.0f;
-
-		if (keys[SDL_SCANCODE_UP]) scalar += 0.1f;
-		if (keys[SDL_SCANCODE_DOWN]) scalar -= 0.1f;
-
 	}
 	else {
 		if (keys[SDL_SCANCODE_W]) dyl += 0.1f;
@@ -371,10 +325,6 @@ void update(void) {
 	{
 		(*it)->update();
 	}
-	//eye = glm::vec3(playerPos.x, playerPos.y + 2, playerPos.z + 3);
-	//at = playerPos;
-	tempVel;// -= 0.1;
-	carPos = glm::vec3(tempVel, carPos.y, carPos.z);
 
 	// Collision Testing
 
@@ -383,8 +333,6 @@ void update(void) {
 		cout << "COLLISION BOI" << endl;
 		delete coinTest;
 	}
-
-	//coinTest.update();
 
 }
 
@@ -407,24 +355,9 @@ void draw(SDL_Window * window) {
 	glm::mat4 modelview(1.0);
 	glm::mat4 identity(1.0);
 
-#pragma region Camera
-
+	// Camera
 	mvStack.push(modelview);
 	mvStack.top() = camera.draw(player.getPosition());
-
-	//// rotation amount (r = rotation amount), - 270 so player starts facing forward.
-	//GLfloat r_cam = r - 270;
-
-	//// calculate unit vector [x, y] on unit circle using cos, sin of angle
-	//vec3 offset(cameraDistance*cos(r_cam*DEG_TO_RADIAN), cameraDistance *0.5, cameraDistance* sin(r_cam*DEG_TO_RADIAN));
-
-	//at = playerPos; // Look at the player's position
-
-	//// eye (Camera's position) + the rotation
-	//eye = playerPos + offset;
-	//mvStack.top() = glm::lookAt(eye, at, up);
-
-#pragma endregion
 
 	skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
 
@@ -446,70 +379,16 @@ void draw(SDL_Window * window) {
 
 	rt3d::setLight(mvpShaderProgram, light1);
 
+	//Player
 	player.draw(mvStack.top(), mvpShaderProgram);
 
-	//Player
-	//mvStack.push(mvStack.top());
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(playerPos));
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(1.0f, 3.0f, 1.0f));
-	//mvStack.top() = glm::rotate(mvStack.top(), float(-r*DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
-	//glBindTexture(GL_TEXTURE_2D, textures[1]);
-	//rt3d::setMaterial(mvpShaderProgram, material0);
-	//rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
-	//mvStack.pop();
-
-#pragma region MD2 Model Draw
-
-	// Animate the md2 model, and update the mesh with new vertex data
-	tmpModel.Animate(currentAnim, 0.1);
-	rt3d::updateMesh(meshObjects[3], RT3D_VERTEX, tmpModel.getAnimVerts(), tmpModel.getVertDataSize());
-
-	// draw the hobgoblin
-	glCullFace(GL_FRONT);
-	glBindTexture(GL_TEXTURE_2D, textures[3]);
-	rt3d::materialStruct tmpMaterial = material0;
-	rt3d::setMaterial(mvpShaderProgram, tmpMaterial);
-	mvStack.push(mvStack.top());
-	
-	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(playerPos));
-	//
-	mvStack.top() = glm::rotate(mvStack.top(), float(-r*DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
-	mvStack.top() = glm::rotate(mvStack.top(), float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
-	mvStack.top() = glm::rotate(mvStack.top(), float(90.0*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
-	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(1 * 0.05, 1 * 0.05, 1 * 0.05));
-	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
-	rt3d::drawMesh(meshObjects[3], md2VertCount, GL_TRIANGLES);
-	mvStack.pop();
-	glCullFace(GL_BACK);
-
-	// draw terrain
+	// Terrain
 	terrain.draw(mvStack.top(), mvpShaderProgram);
-
-	// draw car
-	glCullFace(GL_FRONT);
-	glBindTexture(GL_TEXTURE_2D, textures[4]);
-	//rt3d::materialStruct tmpMaterial = material0;
-	rt3d::setMaterial(mvpShaderProgram, tmpMaterial);
-	mvStack.push(mvStack.top());
-
-	mvStack.top() = glm::translate(mvStack.top(), glm::vec3(carPos));
-	//mvStack.top() = glm::rotate(mvStack.top(), float(-r * DEG_TO_RADIAN), glm::vec3(0.0f, 1.0f, 0.0f));
-	mvStack.top() = glm::rotate(mvStack.top(), float(90.0*DEG_TO_RADIAN), glm::vec3(-1.0f, 0.0f, 0.0f));
-	mvStack.top() = glm::rotate(mvStack.top(), float(90.0*DEG_TO_RADIAN), glm::vec3(0.0f, 0.0f, 1.0f));
-	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(1 * 0.1, 1 * 0.1, 1 * 0.1));
-	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
-	rt3d::drawMesh(meshObjects[4], md2VertCount2, GL_TRIANGLES);
-	mvStack.pop();
-	glCullFace(GL_BACK);
-#pragma endregion
 
 	for (vector<Entity*>::iterator it = gameEntities.begin(); it < gameEntities.end(); it++)
 	{
 		(*it)->draw(mvStack.top(), mvpShaderProgram);
 	}
-
-	//coinTest.draw(mvStack.top(), mvpShaderProgram);
 
 	//Objects
 	mvStack.push(mvStack.top());
@@ -519,15 +398,6 @@ void draw(SDL_Window * window) {
 	rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
-
-	//mvStack.push(mvStack.top()); // Old Terrain
-	//mvStack.top() = glm::translate(mvStack.top(), glm::vec3(0, -1, -10.0f));
-	//mvStack.top() = glm::scale(mvStack.top(), glm::vec3(20.0f, 0.1f, 20.0f));
-	//glBindTexture(GL_TEXTURE_2D, textures[0]);
-	//rt3d::setMaterial(mvpShaderProgram, material0);
-	//rt3d::setUniformMatrix4fv(mvpShaderProgram, "modelview", glm::value_ptr(mvStack.top()));
-	//rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
-	//mvStack.pop();
 
 	glDepthMask(GL_FALSE);
 	mvStack.push(mvStack.top());
@@ -539,18 +409,6 @@ void draw(SDL_Window * window) {
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	glDepthMask(GL_TRUE);
 	mvStack.pop();
-#pragma region Old Light Code
-	////Light Transformations
-	//rt3d::setLight(mvpShaderProgram, light0);
-	//lighttransform = glm::translate(lighttransform, glm::vec3(dxl, dyl, 0));
-	//lighttransform = glm::scale(lighttransform, glm::vec3(lscalar, lscalar, lscalar));
-	//lighttransform = glm::rotate(lighttransform, lr, glm::vec3(0.0f, 1.0f, 0.0f));
-	//lightpos = lighttransform * lightpos;
-	//GLfloat lightpos2[4] = { lightpos[0],lightpos[1],lightpos[2],lightpos[3] };
-	//rt3d::setLightPos(mvpShaderProgram, lightpos2);
-#pragma endregion
-
-
 
 	SDL_GL_SwapWindow(window); // swap buffers
 }
