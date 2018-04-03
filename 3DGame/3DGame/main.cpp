@@ -331,7 +331,8 @@ void update(void) {
 	testAABB.setPosition(playerPos);
 	if (TestAABBAABB(coinTest->getCollision(), testAABB) == true) {
 		cout << "COLLISION BOI" << endl;
-		delete coinTest;
+		//delete coinTest;
+		// registrations.erase(it); erase from vector on collision?
 	}
 
 }
