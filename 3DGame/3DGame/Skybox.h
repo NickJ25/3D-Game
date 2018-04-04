@@ -41,6 +41,7 @@ private:
 		0.0f, 1.0f };
 
 	GLuint cubeIndexCount = 36;
+
 	GLuint cubeIndices[36] = { 0,1,2, 0,2,3, // back  
 							1,0,5, 0,4,5, // left					
 							6,3,2, 3,6,7, // right

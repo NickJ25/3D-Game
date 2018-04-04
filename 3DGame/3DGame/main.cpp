@@ -79,9 +79,9 @@ rt3d::lightStruct light0 = {
 
 rt3d::lightStruct light1 = {
 	{ 0.3f, 0.3f, 0.3f, 1.0f }, // ambient
-{ 0.7f, 0.7f, 0.7f, 1.0f }, // diffuse
-{ 0.8f, 0.8f, 0.8f, 1.0f }, // specular
-{ 10.0f, 0.0f, 1.5f, 1.0f }  // position
+	{ 0.7f, 0.7f, 0.7f, 1.0f }, // diffuse
+	{ 0.8f, 0.8f, 0.8f, 1.0f }, // specular
+	{ 10.0f, 0.0f, 1.0f, 1.0f }  // position
 };
 
 
@@ -120,8 +120,7 @@ stack<glm::mat4> mvStack;
 vector<Entity*> gameEntities;
 
 GLuint meshObjects[6]; // Array with X amount of Unique Objects
-GLuint textures[5]; // Array with X amount of Unique Textures
-GLuint skybox[5]; // Array with X amount of Unique Skyboxes
+GLuint textures[7]; // Array with X amount of Unique Textures
 
 Skybox skyBox;
 
@@ -138,7 +137,7 @@ GLfloat dxl = 0.0f, dyl = 0.0f, lscalar = 1.0f, lr = 0.0f;
 // Player Settings
 glm::vec3 playerPos(0.0f, 0.5f, 1.0f); // TEST COORDS
 
-Player player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
+Player* player = new Player("tris.MD2", glm::vec3(0.0f,0.5f,1.0f), material0);
 
 // Terrain Settings / test
 Terrain terrain("Road.obj", vec3(0,0,0), material0);
@@ -146,7 +145,7 @@ Terrain terrain("Road.obj", vec3(0,0,0), material0);
 AABB testAABB(playerPos, 0.5, 0.5, 0.5);
 
 // Camera Settings
-Camera camera(player.getPosition(), vec3(0.0f,1.0f,0.0f), 270.0f);
+Camera camera(player->getPosition(), vec3(0.0f,1.0f,0.0f), 270.0f);
 
 Coin* coinTest = new Coin("coin.md2", glm::vec3(playerPos.x+5, 0, 0), material2); // delete these
 Car* carTest = new Car("policecar.md2", vec3(0,-1,0), vec3(-0.1,0,0), material0);
@@ -240,6 +239,7 @@ void init(void) {
 
 	gameEntities.push_back(coinTest);
 	gameEntities.push_back(carTest);
+	gameEntities.push_back(player);
 
 	textures[0] = loadBitmap("cobble.bmp");
 	textures[1] = loadBitmap("studdedmetal.bmp");
@@ -247,24 +247,18 @@ void init(void) {
 	textures[3] = loadBitmap("hobgoblin2.bmp");
 	textures[4] = loadBitmap("car.bmp");
 	textures[5] = loadBitmap("coin.bmp");
+	textures[6] = loadBitmap("skybox.bmp");
 
 	meshObjects[3] = tmpModel.ReadMD2Model("tris.MD2");
 	meshObjects[4] = tmpModel2.ReadMD2Model("policecar.md2");
 	md2VertCount = tmpModel.getVertDataCount();
 	md2VertCount2 = tmpModel2.getVertDataCount();
 
-	player.init(textures[3]);
-
-	skybox[0] = loadBitmap("violentdays_bk.bmp");
-	skybox[1] = loadBitmap("violentdays_rt.bmp");
-	skybox[2] = loadBitmap("violentdays_ft.bmp");
-    skybox[3] = loadBitmap("violentdays_lf.bmp");
-	skybox[4] = loadBitmap("violentdays_up.bmp");
-
+	player->init(textures[3]);
 	coinTest->init(textures[5]);
 	carTest->init(textures[4]);
 	terrain.init(textures[0]); // without terrain, skybox messes up?
-	skyBox.init(skybox[0]);
+	skyBox.init(textures[6]);
 	
 	// Going to create our mesh objects here
 	meshObjects[0] = rt3d::createMesh(cubeVertCount, cubeVerts, nullptr, cubeVerts, cubeTexCoords, cubeIndexCount, cubeIndices);
@@ -275,30 +269,57 @@ void init(void) {
 
 }
 
-bool TestAABBAABB(AABB* a, AABB b) // Checks all axis to see if there was an intersection (Base code taken from Real Time Collision Detection by 
+bool TestAABBAABB(AABB* a, AABB* b) // Checks all axis to see if there was an intersection (Base code taken from Real Time Collision Detection by 
 {
-	if (abs(a->getPosition().x - b.getPosition().x) > (a->getSize().x + b.getSize().x)) return false;
-	if (abs(a->getPosition().y - b.getPosition().y) > (a->getSize().y + b.getSize().y)) return false;
-	if (abs(a->getPosition().z - b.getPosition().z) > (a->getSize().z + b.getSize().z)) return false;
+	if (abs(a->getPosition().x - b->getPosition().x) > (a->getSize().x + b->getSize().x)) return false;
+	if (abs(a->getPosition().y - b->getPosition().y) > (a->getSize().y + b->getSize().y)) return false;
+	if (abs(a->getPosition().z - b->getPosition().z) > (a->getSize().z + b->getSize().z)) return false;
 	return true;
+}
+
+void checkCollisions()
+{
+	for (vector<Entity*>::iterator it = gameEntities.begin(); it != gameEntities.end(); it++)
+	{
+		if (player != *it) //Check if we are doing collision detection against the same object
+		{
+			Coin* coin = dynamic_cast<Coin*> (*it);
+			if (coin != nullptr)
+			{
+				if (TestAABBAABB(player->getCollision(), coin->getCollision()))
+				{
+					cout << "BAP BAP" << endl;
+					gameEntities.erase(it);
+					it = gameEntities.begin();
+				}
+			}
+			Car* car = dynamic_cast<Car*> (*it);
+			if (car != nullptr)
+			{
+				if (TestAABBAABB(player->getCollision(), car->getCollision())) {
+					player->setCurrentAnim(5);
+				}
+			}
+		}
+	}
 }
 
 void update(void) {
 
 	// Keyboard inputs
-	player.setCurrentAnim(0); // set player animation to idle
-	player.setRotation(camera.getRotation());
+	player->setCurrentAnim(0); // set player animation to idle
+	player->setRotation(camera.getRotation());
 
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	if (keys[SDL_SCANCODE_L]) lightMode = !lightMode;
 	if (!lightMode) {
 		if (keys[SDL_SCANCODE_W]) {
-			player.moveVert(0.1f); // Rotates the player
-			player.setCurrentAnim(1); // change player animation to walking
+			player->moveVert(0.1f); // Rotates the player
+			player->setCurrentAnim(1); // change player animation to walking
 		}
 		if (keys[SDL_SCANCODE_S]) {
-			player.moveVert(-0.1f); // Rotates the player
-			player.setCurrentAnim(1); // change player animation to walking
+			player->moveVert(-0.1f); // Rotates the player
+			player->setCurrentAnim(1); // change player animation to walking
 		}
 		if (keys[SDL_SCANCODE_D]) {
 			camera.setRotation(camera.getRotation() + 2.0f); // increase rotation for camera
@@ -307,7 +328,7 @@ void update(void) {
 			camera.setRotation(camera.getRotation() - 2.0f); // decreases rotation for camera
 
 		}
-		player.update();
+		//player.update();
 	}
 	else {
 		if (keys[SDL_SCANCODE_W]) dyl += 0.1f;
@@ -325,17 +346,10 @@ void update(void) {
 	{
 		(*it)->update();
 	}
-
-	// Collision Testing
-
-	testAABB.setPosition(playerPos);
-	if (TestAABBAABB(coinTest->getCollision(), testAABB) == true) {
-		cout << "COLLISION BOI" << endl;
-		//delete coinTest;
-		// registrations.erase(it); erase from vector on collision?
-	}
-
+	checkCollisions();
 }
+
+
 
 void draw(SDL_Window * window) {
 	// clear the screen
@@ -358,7 +372,7 @@ void draw(SDL_Window * window) {
 
 	// Camera
 	mvStack.push(modelview);
-	mvStack.top() = camera.draw(player.getPosition());
+	mvStack.top() = camera.draw(player->getPosition());
 
 	skyBox.draw(mvStack.top(), projection, mvpShaderProgram);
 
@@ -378,10 +392,7 @@ void draw(SDL_Window * window) {
 	rt3d::drawIndexedMesh(meshObjects[0], cubeIndexCount, GL_TRIANGLES);
 	mvStack.pop();
 
-	rt3d::setLight(mvpShaderProgram, light1);
-
-	//Player
-	player.draw(mvStack.top(), mvpShaderProgram);
+	//rt3d::setLight(mvpShaderProgram, light1);
 
 	// Terrain
 	terrain.draw(mvStack.top(), mvpShaderProgram);

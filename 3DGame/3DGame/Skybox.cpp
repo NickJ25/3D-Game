@@ -22,10 +22,10 @@ void Skybox::draw(glm::mat4 mvp,glm::mat4 projection, GLuint mvpProgram)
 	glDepthMask(GL_FALSE);
 	glCullFace(GL_FRONT);
 	glBindTexture(GL_TEXTURE_2D, skyboxTex);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	mvStack.push(mvp);
 	mvStack.top() = glm::scale(mvStack.top(), glm::vec3(4.0f, 4.0f, 4.0f)); // you may need to scale it beyond the near clipping plane
 	glm::mat4 view = mvStack.top();
